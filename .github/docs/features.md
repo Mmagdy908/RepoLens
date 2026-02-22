@@ -16,11 +16,11 @@ Built for the **AWS Amazon Nova Hackathon** under the **Agentic AI** category.
 
 | Layer                             | Technology                          |
 | --------------------------------- | ----------------------------------- |
-| **LLM**                           | Amazon Nova 2 Lite (Amazon Bedrock) |
-| **Agent Framework**               | LangGraph                           |
-| **Backend**                       | FastAPI (Python)                    |
-| **Frontend**                      | Next.js (React)                     |
-| **Diagram Rendering**             | Mermaid.js                          |
+| **LLM**                           | Amazon Nova 2 Lite (Amazon Bedrock)          |
+| **Agent Framework**               | LangGraph                                    |
+| **Backend**                       | FastAPI (Python ≥ 3.14)                      |
+| **Frontend**                      | Next.js 14 (TypeScript, App Router, Tailwind)|
+| **Diagram Rendering**             | Mermaid.js                                   |
 | **Vector Store (Phase 3+)**       | ChromaDB (local)                    |
 | **Containerization**              | Docker + Docker Compose             |
 | **Frontend Hosting**              | Vercel                              |
@@ -147,7 +147,7 @@ Amazon Nova 2 Lite supports a **1,000,000 token context window**. For small-to-m
 
 #### 1.6 Chat UI (Next.js Frontend)
 
-**Description**: A clean, modern chat interface for interacting with the agent.
+**Description**: A clean, modern chat interface for interacting with the agent. Built with **Next.js 14 App Router**, **TypeScript (strict mode)**, and **Tailwind CSS**. All components are `.tsx` files; no `.js` or `.jsx` files are used in the frontend.
 
 **Features:**
 
@@ -185,7 +185,7 @@ Amazon Nova 2 Lite supports a **1,000,000 token context window**. For small-to-m
 **Features:**
 
 - `Dockerfile` for the **FastAPI backend** — uses `python:3.14-slim`, installs `uv`, runs `uv sync` to install deps, starts uvicorn with `--reload`.
-- `Dockerfile` for the **Next.js frontend** — uses `node:20-alpine`, installs npm deps at build time, starts `npm run dev`.
+- `Dockerfile` for the **Next.js frontend** — uses `node:20-alpine`, installs npm deps at build time, starts `npm run dev`. Scaffolded with `create-next-app` using `--typescript --tailwind --app --src-dir` flags — **TypeScript strict mode is required; no plain `.js`/`.jsx` files**.
 - `docker-compose.yml` for **local development**:
   - Bind-mounts `./backend` and `./frontend` for hot reload.
   - `node_modules` is an anonymous Docker volume (never written to host).
@@ -522,12 +522,13 @@ repolens/
 │   │   ├── diagrams/       # Mermaid generation utilities
 │   │   └── models/         # Pydantic models
 │   ├── Dockerfile
-│   └── pyproject.toml
+│   └── requirements.txt
 ├── frontend/
 │   ├── src/
-│   │   ├── app/            # Next.js app router
-│   │   ├── components/     # UI components
-│   │   └── lib/            # API client, utils
+│   │   ├── app/            # Next.js app router (TypeScript — .tsx/.ts only)
+│   │   ├── components/     # UI components (.tsx)
+│   │   └── lib/            # API client, utils, types (.ts)
+│   ├── tsconfig.json       # TypeScript strict mode
 │   ├── Dockerfile
 │   └── package.json
 ├── docker-compose.yml

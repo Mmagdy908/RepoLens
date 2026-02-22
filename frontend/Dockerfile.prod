@@ -1,0 +1,39 @@
+# Frontend (Production) — Next.js 14, TypeScript strict mode, Tailwind CSS
+# All source files must be .ts or .tsx — no .js or .jsx
+# NEXT_PUBLIC_API_URL must be passed as a build arg (baked into the JS bundle at build time)
+
+# Stage 1: install dependencies
+FROM node:20-alpine AS deps
+
+WORKDIR /app
+
+COPY package.json package-lock.json ./
+
+RUN npm ci
+
+# Stage 2: build the Next.js app
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+ARG NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+
+RUN npm run build
+
+# Stage 3: lean production runtime
+FROM node:20-alpine AS runtime
+
+WORKDIR /app
+
+ENV NODE_ENV=production
+
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+
+EXPOSE 3000
+CMD ["node", "server.js"]
