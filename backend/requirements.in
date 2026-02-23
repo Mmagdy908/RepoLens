@@ -1,2 +1,12 @@
-uvicorn[standard]
+# Phase 1 dependencies — edit this file, then run:
+#   docker compose run --rm backend pip-compile requirements.in -o requirements.txt
 fastapi
+uvicorn[standard]
+langgraph
+langchain-core
+openai
+python-dotenv
+python-multipart
+gitpython
+tiktoken
+pathspec

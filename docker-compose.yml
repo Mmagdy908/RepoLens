@@ -1,25 +1,39 @@
+version: "3.9"
+
 services:
   backend:
     build:
       context: ./backend
+      dockerfile: Dockerfile
+    volumes:
+      # Bind-mount source for hot reload
+      - ./backend:/app
     ports:
       - "8000:8000"
-    volumes:
-      - ./backend:/app
     env_file:
       - .env
+    environment:
+      - PYTHONPATH=/app
+      - PYTHONDONTWRITEBYTECODE=1
+      - PYTHONUNBUFFERED=1
     restart: unless-stopped
 
   frontend:
     build:
       context: ./frontend
+      dockerfile: Dockerfile
+    volumes:
+      # Bind-mount source for hot reload
+      - ./frontend:/app
+      # Keep node_modules inside the container (anonymous volume)
+      - /app/node_modules
     ports:
       - "3000:3000"
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
     env_file:
       - .env
+    environment:
+      - NODE_ENV=development
+      - WATCHPACK_POLLING=true
     depends_on:
       - backend
     restart: unless-stopped

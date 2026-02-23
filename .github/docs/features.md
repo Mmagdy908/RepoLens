@@ -19,7 +19,7 @@ Built for the **AWS Amazon Nova Hackathon** under the **Agentic AI** category.
 | **LLM**                           | Amazon Nova 2 Lite (Amazon Bedrock)          |
 | **Agent Framework**               | LangGraph                                    |
 | **Backend**                       | FastAPI (Python ≥ 3.14)                      |
-| **Frontend**                      | Next.js 14 (TypeScript, App Router, Tailwind)|
+| **Frontend**                      | Next.js 16 (TypeScript, App Router, Tailwind)|
 | **Diagram Rendering**             | Mermaid.js                                   |
 | **Vector Store (Phase 3+)**       | ChromaDB (local)                    |
 | **Containerization**              | Docker + Docker Compose             |
@@ -147,7 +147,7 @@ Amazon Nova 2 Lite supports a **1,000,000 token context window**. For small-to-m
 
 #### 1.6 Chat UI (Next.js Frontend)
 
-**Description**: A clean, modern chat interface for interacting with the agent. Built with **Next.js 14 App Router**, **TypeScript (strict mode)**, and **Tailwind CSS**. All components are `.tsx` files; no `.js` or `.jsx` files are used in the frontend.
+**Description**: A clean, modern chat interface for interacting with the agent. Built with **Next.js 16 App Router**, **TypeScript (strict mode)**, and **Tailwind CSS**. All components are `.tsx` files; no `.js` or `.jsx` files are used in the frontend.
 
 **Features:**
 

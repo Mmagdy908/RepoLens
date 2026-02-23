@@ -1,4 +1,6 @@
-# Phase 1 — Progress Tracker
+# Phase 1 — Progress Tracker- [x] **T1.6** — Create `backend/requirements.txt` with all Phase 1 deps using `backend/requirements.in` and pip-compile
+
+      _fastapi, uvicorn[standard], langgraph, langchain-core, openai, python-dotenv, python-multipart, gitpython, tiktoken, pathspec. Python ≥ 3.14._
 
 > **Plan source**: `docs/phase1-plan.md`  
 > **Features source**: `docs/features.md` §Phase 1  
@@ -24,20 +26,26 @@ Legend: `[ ]` Not started · `[~]` In progress · `[x]` Done · `[!]` Blocked
 - [x] **T1.4** — Create `docker-compose.prod.yml`  
        _Multi-stage builds for both services. No bind mounts. `NEXT_PUBLIC_API_URL` build arg for frontend._
 
-- [ ] **T1.5** — Create `.env.example`  
+- [x] **T1.5** — Create `.env.example`  
        _Document all required vars: `NOVA_API_KEY`, `NEXT_PUBLIC_API_URL=http://localhost:8000`._
 
-- [ ] **T1.6** — Create `backend/requirements.txt` with all Phase 1 deps using `backend/requirements.in` and pip-compile
+- [x] **T1.6** — Create `backend/requirements.txt` with all Phase 1 deps using `backend/requirements.in` and pip-compile
       _fastapi, uvicorn[standard], langgraph, langchain-core, openai, python-dotenv, python-multipart, gitpython, tiktoken, pathspec. Python ≥ 3.14._
 
-- [ ] **T1.7** — Scaffold Next.js frontend project  
-       _Run `docker compose run --rm frontend npx create-next-app@14 . --typescript --tailwind --app --src-dir --no-git --import-alias "@/*"` inside the container. Verify `tsconfig.json` is created with `"strict": true`. All generated files must be `.tsx`/`.ts` — delete any `.js`/`.jsx` files if created._
+- [x] **T1.7** — Scaffold Next.js frontend project  
+       _Run `docker compose run --rm frontend npx create-next-app@latest . --typescript --tailwind --app --src-dir --no-git --import-alias "@/*"` inside the container. Verify `tsconfig.json` is created with `"strict": true`. All generated files must be `.tsx`/`.ts` — delete any `.js`/`.jsx` files if created._
 
-- [ ] **T1.8** — Create `.devcontainer/devcontainer.json`  
+- [x] **T1.8** — Create `.devcontainer/devcontainer.json`  
        _Point at `docker-compose.yml`, set service to `backend`. Enables VS Code Dev Containers for IntelliSense._
 
-- [ ] **T1.9** — Smoke test: `docker compose up` boots both containers cleanly  
-       _Verify: backend logs show uvicorn running, frontend logs show Next.js ready._
+- [x] **T1.9** — Create `backend/app/__init__.py` and `backend/app/main.py` boilerplate  
+       _Minimal FastAPI app so uvicorn can boot: `app = FastAPI()` + a single `GET /` returning `{"status": "ok"}`. No business logic. This is the minimum needed to verify the backend Dockerfile works._
+
+- [x] **T1.10** — Verify frontend boilerplate boots in Docker  
+       _Confirm `frontend/src/app/page.tsx`, `layout.tsx`, `globals.css`, `tsconfig.json`, `next.config.ts`, `tailwind.config.ts`, and `postcss.config.js` all exist. These are the minimum files Next.js needs to start._
+
+- [ ] **T1.11** — Smoke test: `docker compose up` boots both containers cleanly  
+       _Verify: `docker compose up` starts without errors. Backend logs show uvicorn running on port 8000. Frontend logs show Next.js ready on port 3000._
 
 ---
 

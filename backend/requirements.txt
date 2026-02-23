@@ -1,19 +1,14 @@
-annotated-doc==0.0.4
-annotated-types==0.7.0
-anyio==4.12.1
-click==8.3.1
-colorama==0.4.6
-fastapi==0.129.2
-h11==0.16.0
-httptools==0.7.1
-idna==3.11
-pydantic==2.12.5
-pydantic-core==2.41.5
-python-dotenv==1.2.1
-pyyaml==6.0.3
-starlette==0.52.1
-typing-extensions==4.15.0
-typing-inspection==0.4.2
-uvicorn[standard]==0.41.0
-watchfiles==1.1.1
-websockets==16.0
+# RepoLens backend dependencies
+# Edit this file then run: docker compose build backend
+
+fastapi>=0.110
+uvicorn[standard]>=0.29
+langgraph>=0.2
+langchain-core>=0.2
+langchain-openai>=0.1
+openai>=1.30
+python-dotenv>=1.0
+python-multipart>=0.0.9
+gitpython>=3.1
+tiktoken>=0.7
+pathspec>=0.12

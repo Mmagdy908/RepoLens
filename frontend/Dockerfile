@@ -1,14 +1,14 @@
-# Frontend — Next.js 14, TypeScript strict mode, Tailwind CSS
-# All source files must be .ts or .tsx — no .js or .jsx
 FROM node:20-alpine
 
 WORKDIR /app
 
-COPY package.json package-lock.json ./
+# Install dependencies at build time (cached layer)
+COPY package.json package-lock.json* ./
+RUN npm ci || npm install
 
-RUN npm ci
-
+# Copy source (overridden by bind-mount in dev)
 COPY . .
 
 EXPOSE 3000
+
 CMD ["npm", "run", "dev"]

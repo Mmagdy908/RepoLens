@@ -1,6 +1,6 @@
 ---
-mode: "agent"
-description: "Break a phase plan into granular tasks and write docs/phaseN-progress.md"
+mode: agent
+description: Break a phase plan into granular tasks and write docs/phaseN-progress.md
 ---
 
 Read #file:../docs/features.md and the most recent `docs/phaseN-plan.md` that exists but has no matching `docs/phaseN-progress.md` yet.

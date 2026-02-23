@@ -1,6 +1,6 @@
 ---
-mode: "agent"
-description: "Plan the next Phase from features.md and write docs/phaseN-plan.md"
+mode: agent
+description: Plan the next Phase from features.md and write docs/phaseN-plan.md
 ---
 
 Read #file:../docs/features.md carefully.
@@ -30,4 +30,3 @@ Rules:
 - Do NOT start implementing anything — this is planning only
 - Keep each feature section concise; defer implementation details to the progress file
 - If a feature depends on a previous phase feature not yet built, call it out explicitly as a prerequisite
-- Do Not assume or take any decisions not explicitly stated in the features.md — if something is ambiguous, ask the user for clarification before writing the plan file

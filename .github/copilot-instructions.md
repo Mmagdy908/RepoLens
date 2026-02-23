@@ -47,7 +47,7 @@ repolens/                         ← repo root (this workspace)
 | LLM              | Amazon Nova 2 Lite                          | Via `api.nova.amazon.com/v1` (OpenAI-compatible SDK) |
 | Agent Framework  | LangGraph                                   | `langgraph` + `langchain-core` packages              |
 | Backend          | FastAPI (Python ≥ 3.14)                     | `pip` + `requirements.txt` inside Docker             |
-| Frontend         | Next.js 14 (TypeScript)                     | App Router, Tailwind CSS                             |
+| Frontend         | Next.js 16 (TypeScript)                     | App Router, Tailwind CSS                             |
 | Diagrams         | Mermaid.js                                  | Rendered client-side via `mermaid` npm package       |
 | Vector Store     | ChromaDB                                    | Phase 3 only — not needed for small/medium repos     |
 | Containerization | Docker + Docker Compose                     | Both dev and prod configs exist                      |
