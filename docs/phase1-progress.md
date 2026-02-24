@@ -2,7 +2,7 @@
 
 > **Plan source**: `docs/phase1-plan.md`  
 > **Features source**: `docs/features.md` §Phase 1  
-> **Last updated**: 2026-02-21  
+> **Last updated**: 2026-02-24  
 
 Legend: `[ ]` Not started · `[~]` In progress · `[x]` Done · `[!]` Blocked
 
@@ -12,52 +12,53 @@ Legend: `[ ]` Not started · `[~]` In progress · `[x]` Done · `[!]` Blocked
 
 > All subsequent work happens inside Docker. This milestone must be 100% done before anything else.
 
-- [ ] **T1.1** — Create `backend/Dockerfile`  
+- [x] **T1.1** — Create `backend/Dockerfile`  
   _Base: `python:3.14-slim`. Copy `requirements.txt`. Run `pip install --no-cache-dir -r requirements.txt`. Set `CMD` to `uvicorn app.main:app --reload --host 0.0.0.0 --port 8000`._
 
-- [ ] **T1.2** — Create `frontend/Dockerfile`  
+- [x] **T1.2** — Create `frontend/Dockerfile`  
   _Base: `node:20-alpine`. Copy `package.json` + `package-lock.json`. Run `npm ci`. Set `CMD` to `npm run dev`._
 
-- [ ] **T1.3** — Create `docker-compose.yml` (dev)  
+- [x] **T1.3** — Create `docker-compose.yml` (dev)  
   _Services: `backend` (port 8000, bind-mount `./backend`, env_file `.env`) and `frontend` (port 3000, bind-mount `./frontend`, anonymous volume for `node_modules`, env_file `.env`)._
 
-- [ ] **T1.4** — Create `docker-compose.prod.yml`  
+- [x] **T1.4** — Create `docker-compose.prod.yml`  
   _Multi-stage builds for both services. No bind mounts. `NEXT_PUBLIC_API_URL` build arg for frontend._
 
-- [ ] **T1.5** — Create `.env.example`  
+- [x] **T1.5** — Create `.env.example`  
   _Document all required vars: `NOVA_API_KEY`, `NEXT_PUBLIC_API_URL=http://localhost:8000`._
 
-- [ ] **T1.6** — Create `backend/requirements.txt` with all Phase 1 deps  
+- [x] **T1.6** — Create `backend/requirements.txt` with all Phase 1 deps  
   _fastapi, uvicorn[standard], langgraph, langchain-core, openai, python-dotenv, python-multipart, gitpython, tiktoken, pathspec. Python ≥ 3.14._
 
-- [ ] **T1.7** — Scaffold Next.js frontend project  
+- [x] **T1.7** — Scaffold Next.js frontend project  
   _Run `docker compose run --rm frontend npx create-next-app@14 . --typescript --tailwind --app --src-dir --no-git --import-alias "@/*"` inside the container._
 
-- [ ] **T1.8** — Create `.devcontainer/devcontainer.json`  
+- [x] **T1.8** — Create `.devcontainer/devcontainer.json`  
   _Point at `docker-compose.yml`, set service to `backend`. Enables VS Code Dev Containers for IntelliSense._
 
-- [ ] **T1.9** — Smoke test: `docker compose up` boots both containers cleanly  
+- [x] **T1.9** — Smoke test: `docker compose up` boots both containers cleanly  
   _Verify: backend logs show uvicorn running, frontend logs show Next.js ready._
 
 ---
 
 ## Milestone 2 — FastAPI Backend Skeleton (Feature 1.7)
 
-- [ ] **T2.1** — Create `backend/app/__init__.py` (empty)
+- [x] **T2.1** — Create `backend/app/__init__.py` (empty)
 
-- [ ] **T2.2** — Create `backend/app/main.py`  
-  _FastAPI app instance, CORS middleware (allow `http://localhost:3000`), include all routers._
+- [!] **T2.2** — Create `backend/app/main.py`  
+  _FastAPI app instance, CORS middleware (allow `http://localhost:3000`), include all routers._  
+  ⚠️ File exists but is a bare stub — no CORS middleware, no router includes. Needs to be completed after T2.3–T2.9 create the routers.
 
-- [ ] **T2.3** — Create `backend/app/api/health.py`  
+- [x] **T2.3** — Create `backend/app/api/health.py`  
   _`GET /api/health` → `{"status": "ok", "service": "repolens-backend"}`._
 
-- [ ] **T2.4** — Create `backend/app/models/session.py`  
+- [x] **T2.4** — Create `backend/app/models/session.py`  
   _Pydantic v2 models: `FileNode`, `SessionState`, `SessionSummary`._
 
-- [ ] **T2.5** — Create `backend/app/models/ingest.py`  
+- [x] **T2.5** — Create `backend/app/models/ingest.py`  
   _`IngestRequest(url: str | None, ...)`, `IngestResponse(session_id, file_tree, token_count, token_budget)`._
 
-- [ ] **T2.6** — Create `backend/app/models/chat.py`  
+- [x] **T2.6** — Create `backend/app/models/chat.py`  
   _`ChatRequest(session_id, message)`, `ChatResponse(content, role)`._
 
 - [ ] **T2.7** — Create `backend/app/api/sessions.py`  
@@ -227,8 +228,9 @@ Legend: `[ ]` Not started · `[~]` In progress · `[x]` Done · `[!]` Blocked
 - [ ] **T8.12** — Update `src/app/page.tsx`  
   _Renders `<AppShell>`. Handles top-level session state._
 
-- [ ] **T8.13** — Update `src/app/layout.tsx`  
-  _Dark mode support via Tailwind `dark` class. Inter font._
+- [~] **T8.13** — Update `src/app/layout.tsx`  
+  _Dark mode support via Tailwind `dark` class. Inter font._  
+  ⚠️ `layout.tsx` exists and has `suppressHydrationWarning` + Inter via CSS. Still needs `class="dark"` on `<html>` for Tailwind dark mode to work.
 
 - [ ] **T8.14** — End-to-end smoke test in browser  
   _Paste GitHub URL → ingestion shows file tree + token bar → send "What does this project do?" → see streamed response → ask for architecture diagram → see Mermaid rendered inline._
