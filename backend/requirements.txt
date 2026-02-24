@@ -3,6 +3,7 @@
 
 fastapi>=0.110
 uvicorn[standard]>=0.29
+watchfiles>=0.21
 langgraph>=0.2
 langchain-core>=0.2
 langchain-openai>=0.1
