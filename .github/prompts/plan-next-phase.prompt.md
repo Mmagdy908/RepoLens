@@ -1,17 +1,17 @@
 ---
-mode: agent
-description: Plan the next Phase from features.md and write docs/phaseN-plan.md
+mode: "agent"
+description: "Plan the next Phase from features.md and write .github/docs/phaseN-plan.md"
 ---
 
 Read #file:../docs/features.md carefully.
 
 Identify the **next phase that has no plan file yet** by checking which of these files exist:
 
-- `docs/phase1-plan.md`
-- `docs/phase2-plan.md`
-- `docs/phase3-plan.md`
+- `.github/docs/phase1-plan.md`
+- `.github/docs/phase2-plan.md`
+- `.github/docs/phase3-plan.md`
 
-For that phase, create `docs/phaseN-plan.md` (where N is the phase number) containing:
+For that phase, create `.github/docs/phaseN-plan.md` (where N is the phase number) containing:
 
 1. **Header** — phase name, goal, timeline, status (🟡 Planning)
 2. **What We Are Building** — one paragraph + a flow diagram in plain text showing how the pieces connect

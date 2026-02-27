@@ -1,11 +1,11 @@
 ---
-mode: agent
-description: Break a phase plan into granular tasks and write docs/phaseN-progress.md
+mode: "agent"
+description: "Break a phase plan into granular tasks and write .github/docs/phaseN-progress.md"
 ---
 
-Read #file:../docs/features.md and the most recent `docs/phaseN-plan.md` that exists but has no matching `docs/phaseN-progress.md` yet.
+Read #file:../docs/features.md and the most recent `.github/docs/phaseN-plan.md` that exists but has no matching `.github/docs/phaseN-progress.md` yet.
 
-Create `docs/phaseN-progress.md` with the following structure:
+Create `.github/docs/phaseN-progress.md` with the following structure:
 
 1. **Header** — link to the plan file, last updated date, legend ([ ] · [~] · [x] · [!])
 2. **One Milestone per feature** in the phase plan, numbered M1, M2, …

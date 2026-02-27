@@ -1,6 +1,6 @@
 # Phase 1 — Core Foundation: Implementation Plan
 
-> **Source**: `docs/features.md` §Phase 1  
+> **Source**: `.github/docs/features.md` §Phase 1  
 > **Goal**: A fully working end-to-end demo covering the golden demo path.  
 > **Timeline**: Week 1 (Days 1–7)  
 > **Status**: 🟡 Planning
@@ -43,7 +43,6 @@ User pastes GitHub URL
 - `backend/Dockerfile`
 - `backend/requirements.txt`
 - `frontend/Dockerfile`
-- `frontend/next.config.ts` — must include `output: 'standalone'` for prod image + `typescript: { ignoreBuildErrors: false }` to enforce strict TS
 - `docker-compose.yml` (dev, with bind mounts + hot reload)
 - `docker-compose.prod.yml` (multi-stage production build)
 - `.env.example`
@@ -167,17 +166,11 @@ User pastes GitHub URL
 
 ### 1.6 Chat UI (Next.js Frontend)
 
-**What**: The full browser interface. Built with **Next.js 14 App Router**, **TypeScript strict mode**, and **Tailwind CSS**. All source files must be `.tsx` (components/pages) or `.ts` (utilities/types) — no `.js` or `.jsx` files anywhere in the frontend.
-
-**TypeScript requirements**:
-- `tsconfig.json` must have `"strict": true`
-- No `any` types — all API response shapes defined in `src/lib/types.ts`
-- All component props must have explicit TypeScript interfaces
+**What**: The full browser interface. Built with Next.js 14 App Router + Tailwind CSS.
 
 **Pages & layout**:
 - `src/app/layout.tsx` — root layout (fonts, dark mode class)
 - `src/app/page.tsx` — main page: renders `<AppShell>`
-- `src/app/globals.css` — Tailwind base styles
 
 **Components** (`src/components/`):
 - `AppShell.tsx` — top-level layout: sidebar + main chat area
@@ -197,12 +190,6 @@ User pastes GitHub URL
 
 **Types** (`src/lib/types.ts`):
 - All API shapes: `SessionState`, `IngestResponse`, `ChatMessage`, `FileNode`
-- No `any` — every shape explicitly typed
-
-**Scaffold command** (run once in T1.7):
-```
-npx create-next-app@latest . --typescript --tailwind --app --src-dir --no-git --import-alias "@/*"
-```
 
 ---
 
@@ -225,26 +212,21 @@ pathspec>=0.12
 ### Frontend (`frontend/package.json`)
 ```json
 "dependencies": {
-  "next": "^16.1.6",
+  "next": "14",
   "react": "^18",
   "react-dom": "^18",
   "mermaid": "^10",
-  "react-syntax-highlighter": "^16.1.0"
+  "react-syntax-highlighter": "^15"
 },
 "devDependencies": {
   "typescript": "^5",
   "@types/node": "^20",
   "@types/react": "^18",
-  "@types/react-dom": "^18",
-  "@types/react-syntax-highlighter": "^15",
-  "eslint": "^10.0.1",
-  "eslint-config-next": "^0.2.4",
   "tailwindcss": "^3",
   "autoprefixer": "^10",
   "postcss": "^8"
 }
 ```
-> ⚠️ TypeScript strict mode is **required**. `tsconfig.json` must contain `"strict": true`. All files must be `.ts` or `.tsx` — never `.js` or `.jsx`.
 
 ---
 

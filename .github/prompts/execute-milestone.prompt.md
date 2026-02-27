@@ -1,6 +1,6 @@
 ---
-mode: agent
-description: Execute all pending tasks in a single milestone from the progress file
+mode: "agent"
+description: "Execute all pending tasks in a single milestone from the progress file"
 ---
 
 Read #file:../docs/phase1-progress.md (or the most recently updated phaseN-progress.md).

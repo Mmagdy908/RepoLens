@@ -34,8 +34,11 @@ repolens/                         ← repo root (this workspace)
 ├── docker-compose.yml            ← Dev environment (hot reload)
 ├── docker-compose.prod.yml       ← Production build
 ├── .env.example                  ← All required env vars documented here
-└── docs/
-    └── features.md               ← Full feature spec — read this first
+└── .github/
+    ├── copilot-instructions.md
+    ├── prompts/                  ← Reusable Copilot prompt files
+    └── docs/
+        └── features.md           ← Full feature spec — read this first
 ```
 
 ---
@@ -173,8 +176,8 @@ Features are built phase by phase using three document types and a set of reusab
 ### Document types (one set per phase)
 | File | Purpose |
 |---|---|
-| `docs/phaseN-plan.md` | High-level implementation plan for the phase — what to build, file list, build order, definition of done |
-| `docs/phaseN-progress.md` | Granular task checklist broken out of the plan — one task = one file/function, ~30 min of work |
+| `.github/docs/phaseN-plan.md` | High-level implementation plan for the phase — what to build, file list, build order, definition of done |
+| `.github/docs/phaseN-progress.md` | Granular task checklist broken out of the plan — one task = one file/function, ~30 min of work |
 
 ### Reusable prompt files (`.github/prompts/`)
 | Prompt file | When to use |
@@ -187,8 +190,8 @@ Features are built phase by phase using three document types and a set of reusab
 
 ### Normal working loop
 ```
-1. Review docs/phaseN-plan.md  →  adjust if needed
-2. Review docs/phaseN-progress.md  →  adjust if needed
+1. Review .github/docs/phaseN-plan.md  →  adjust if needed
+2. Review .github/docs/phaseN-progress.md  →  adjust if needed
 3. Run execute-next-task  →  agent implements one task, marks [x]
 4. Repeat step 3 until milestone is done
 5. Run verify-progress  →  catch anything broken
@@ -202,9 +205,9 @@ Features are built phase by phase using three document types and a set of reusab
 
 ## Existing Resources
 
-- `docs/features.md` — full feature spec with phases, priority matrix, and 3-week timeline. **Always consult this before adding a new feature.**
-- `docs/phase1-plan.md` — Phase 1 implementation plan (ready).
-- `docs/phase1-progress.md` — Phase 1 task checklist (ready to execute).
+- `.github/docs/features.md` — full feature spec with phases, priority matrix, and 3-week timeline. **Always consult this before adding a new feature.**
+- `.github/docs/phase1-plan.md` — Phase 1 implementation plan (ready).
+- `.github/docs/phase1-progress.md` — Phase 1 task checklist (ready to execute).
 - `.github/prompts/` — reusable Copilot prompt files for the dev workflow.
 - `.gitignore` — already configured for Python and Node.
 

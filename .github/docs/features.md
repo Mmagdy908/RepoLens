@@ -534,8 +534,9 @@ repolens/
 ├── docker-compose.yml
 ├── docker-compose.prod.yml
 ├── .env.example
-└── docs/
-    └── features.md         # This document
+└── .github/
+    └── docs/
+        └── features.md         # This document
 ```
 
 ---
