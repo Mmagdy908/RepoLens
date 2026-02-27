@@ -5,12 +5,9 @@ No database is used in Phase 1; state is lost on server restart.
 
 Routes
 ------
-POST   /api/sessions            → create a new empty session (201)
 GET    /api/sessions/{id}       → retrieve session summary (200 | 404)
 DELETE /api/sessions/{id}       → delete session (204 | 404)
 """
-
-from uuid import uuid4
 
 from fastapi import APIRouter, HTTPException
 
