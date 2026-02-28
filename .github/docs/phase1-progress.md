@@ -46,7 +46,7 @@ Legend: `[ ]` Not started · `[~]` In progress · `[x]` Done · `[!]` Blocked
 - [x] **T2.1** — Create `backend/app/__init__.py` (empty)
 
 - [x] **T2.2** — Create `backend/app/main.py`  
-      _FastAPI app instance, CORS middleware (allow `http://localhost:3000`), include all routers._
+       _FastAPI app instance, CORS middleware (allow `http://localhost:3000`), include all routers._
 
 - [x] **T2.3** — Create `backend/app/api/health.py`  
        _`GET /api/health` → `{"status": "ok", "service": "repolens-backend"}`._
@@ -103,17 +103,17 @@ Legend: `[ ]` Not started · `[~]` In progress · `[x]` Done · `[!]` Blocked
 
 ## Milestone 4 — Context Packing (Feature 1.2)
 
-- [ ] **T4.1** — Create `backend/app/ingestion/packer.py`  
+- [x] **T4.1** — Create `backend/app/ingestion/packer.py`  
        _`pack_context(file_nodes: list[FileNode], root: Path, budget: int = 750_000) -> tuple[str, int]`_
       _Sort files by priority score (entry points first, generated files last). Concatenate with `=== FILE: {path} ===` headers. Stop adding when token count exceeds budget. Return `(packed_string, total_tokens)`._
 
-- [ ] **T4.2** — Define priority scoring in `packer.py`  
+- [x] **T4.2** — Define priority scoring in `packer.py`  
        _Score rules: `main.*`, `index.*`, `app.*` → 100 pts; `*.config.*`, `*.toml`, `*.json` → 80 pts; `src/` files → 60 pts; `test*/` → 20 pts; `dist/`, `build/`, `generated/` → 5 pts._
 
-- [ ] **T4.3** — Store `repo_context` string in `SessionState` after ingestion  
+- [x] **T4.3** — Store `repo_context` string in `SessionState` after ingestion  
        _Update `POST /api/ingest` to call `pack_context` and store result in session._
 
-- [ ] **T4.4** — Return `token_count` and `token_budget` in `IngestResponse`  
+- [x] **T4.4** — Return `token_count` and `token_budget` in `IngestResponse`  
        _Frontend will use these to render the token usage bar._
 
 ---

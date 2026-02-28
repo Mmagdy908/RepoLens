@@ -22,6 +22,7 @@ from app.api.sessions import _sessions
 from app.ingestion.cloner import clone_from_url
 from app.ingestion.extractor import extract_zip
 from app.ingestion.filter import filter_files
+from app.ingestion.packer import pack_context
 from app.ingestion.token_counter import count_tokens
 from app.models.ingest import IngestRequest, IngestResponse
 from app.models.session import SessionState
@@ -45,13 +46,16 @@ async def _run_pipeline(root: Path, repo_url: str | None) -> SessionState:
             except OSError:
                 node.token_count = 0
 
-        total_tokens = sum(n.token_count for n in nodes)
+        # Pack the context string within the 750k-token budget (T4.3).
+        packed_string, packed_tokens = pack_context(nodes, root, budget=750_000)
+
         session_id = str(uuid4())
         return SessionState(
             session_id=session_id,
             repo_url=repo_url,
             file_tree=nodes,
-            token_count=total_tokens,
+            repo_context=packed_string,
+            token_count=packed_tokens,
             token_budget=750_000,
         )
 
@@ -131,7 +135,6 @@ async def ingest_zip(file: UploadFile = File(...)) -> IngestResponse:
         ) from exc
 
     _sessions[session.session_id] = session
-
     return IngestResponse(
         session_id=session.session_id,
         file_tree=session.file_tree,
