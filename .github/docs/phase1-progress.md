@@ -133,19 +133,19 @@ Legend: `[ ]` Not started · `[~]` In progress · `[x]` Done · `[!]` Blocked
 - [x] **T5.5** — Create `backend/app/agent/tools/general_qa.py`  
        _`@tool answer_general_question(question: str) -> str`._
 
-- [ ] **T5.6** — Create `backend/app/agent/tools/overview.py`  
+- [x] **T5.6** — Create `backend/app/agent/tools/overview.py`  
        _`@tool get_project_overview() -> str`._
 
-- [ ] **T5.7** — Create `backend/app/agent/tools/tech_stack.py`  
+- [x] **T5.7** — Create `backend/app/agent/tools/tech_stack.py`  
        _`@tool get_tech_stack() -> str`._
 
-- [ ] **T5.8** — Create `backend/app/agent/tools/architecture.py`  
+- [x] **T5.8** — Create `backend/app/agent/tools/architecture.py`  
        _`@tool get_architecture_summary() -> str`._
 
-- [ ] **T5.9** — Create `backend/app/agent/tools/file_explain.py`  
+- [x] **T5.9** — Create `backend/app/agent/tools/file_explain.py`  
        _`@tool get_file_explanation(file_path: str) -> str`._
 
-- [ ] **T5.10** — Create `backend/app/agent/tools/folder_explain.py`  
+- [x] **T5.10** — Create `backend/app/agent/tools/folder_explain.py`  
        _`@tool get_folder_explanation(folder_path: str) -> str`._
 
 - [ ] **T5.11** — Create `backend/app/agent/graph.py`  

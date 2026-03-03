@@ -29,4 +29,4 @@ After completing the task, report:
 - 📁 Files created or modified
 - 🔜 What the next task is (just the task ID and title)
 
-Do NOT execute more than one task per run.
+Do NOT execute more than one task per run UNLESS explicitly instructed to do so.
