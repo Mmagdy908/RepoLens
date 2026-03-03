@@ -3,6 +3,10 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api import chat, health, ingest, sessions
 
+import dotenv
+
+dotenv.load_dotenv()
+
 app = FastAPI(title="RepoLens API", version="0.1.0")
 
 app.add_middleware(

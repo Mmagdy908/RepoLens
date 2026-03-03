@@ -120,17 +120,17 @@ Legend: `[ ]` Not started · `[~]` In progress · `[x]` Done · `[!]` Blocked
 
 ## Milestone 5 — Nova Client + LangGraph Agent (Feature 1.3)
 
-- [ ] **T5.1** — Create `backend/app/agent/__init__.py` (empty)
+- [x] **T5.1** — Create `backend/app/agent/__init__.py` (empty)
 
-- [ ] **T5.2** — Create `backend/app/agent/nova_client.py`  
+- [x] **T5.2** — Create `backend/app/agent/nova_client.py`  
        _Singleton `OpenAI` client: `base_url="https://api.nova.amazon.com/v1"`, `api_key=os.environ["NOVA_API_KEY"]`._
 
-- [ ] **T5.3** — Create `backend/app/agent/state.py`  
+- [x] **T5.3** — Create `backend/app/agent/state.py`  
        _`AgentState(TypedDict)`: `session_id: str`, `repo_context: str`, `messages: list[dict]`._
 
-- [ ] **T5.4** — Create `backend/app/agent/tools/__init__.py` (empty)
+- [x] **T5.4** — Create `backend/app/agent/tools/__init__.py` (empty)
 
-- [ ] **T5.5** — Create `backend/app/agent/tools/general_qa.py`  
+- [x] **T5.5** — Create `backend/app/agent/tools/general_qa.py`  
        _`@tool answer_general_question(question: str) -> str`._
 
 - [ ] **T5.6** — Create `backend/app/agent/tools/overview.py`  
