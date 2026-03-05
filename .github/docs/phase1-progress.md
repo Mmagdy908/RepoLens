@@ -148,7 +148,7 @@ Legend: `[ ]` Not started · `[~]` In progress · `[x]` Done · `[!]` Blocked
 - [x] **T5.10** — Create `backend/app/agent/tools/folder_explain.py`  
        _`@tool get_folder_explanation(folder_path: str) -> str`._
 
-- [ ] **T5.11** — Create `backend/app/agent/graph.py`  
+- [x] **T5.11** — Create `backend/app/agent/graph.py`  
        _Build `StateGraph(AgentState)`. Add `agent` node (calls Nova with all tools bound). Add `tools` node (executes selected tool). Add edges with `should_continue` conditional. Compile once as `compiled_graph = graph.compile()` module-level._
 
 - [ ] **T5.12** — Wire agent into `POST /api/chat`  
