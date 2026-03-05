@@ -154,7 +154,7 @@ Legend: `[ ]` Not started · `[~]` In progress · `[x]` Done · `[!]` Blocked
 - [x] **T5.12** — Wire agent into `POST /api/chat`  
        _Load session → build initial state with `repo_context` + message → invoke `compiled_graph` → return non-streaming response first (streaming in T5.13)._
 
-- [ ] **T5.13** — Implement SSE streaming in `POST /api/chat`  
+- [x] **T5.13** — Implement SSE streaming in `POST /api/chat`  
        _Replace with `StreamingResponse`. Use `graph.astream_events()`. Filter `on_chat_model_stream`. Yield `data: {chunk}\n\n` SSE format._
 
 - [ ] **T5.14** — Integration test: send "What does this project do?" via API, verify streamed Nova response

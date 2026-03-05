@@ -1,22 +1,22 @@
 """Chat API — Feature 1.3 (Nova Client + LangGraph Agent).
 
-Accepts a ChatRequest, builds an AgentState from the session, invokes the
-compiled LangGraph and returns the assistant reply as a plain JSON response.
-Streaming (SSE) is added in T5.13.
+Accepts a ChatRequest, builds an AgentState from the session, and streams
+the assistant reply as Server-Sent Events (SSE).
 
 Routes
 ------
-POST /api/chat   → ChatResponse (200)
+POST /api/chat   → StreamingResponse (text/event-stream)
 """
 
-import asyncio
+import json
 
 from fastapi import APIRouter, HTTPException
+from fastapi.responses import StreamingResponse
 from langchain_core.messages import HumanMessage, SystemMessage
 
 from app.agent.graph import compiled_graph
 from app.api.sessions import _sessions
-from app.models.chat import ChatRequest, ChatResponse
+from app.models.chat import ChatRequest
 
 router = APIRouter(prefix="/api")
 
@@ -45,12 +45,16 @@ the user explicitly asks for detail.
 """
 
 
-@router.post("/chat", response_model=ChatResponse)
-async def chat(request: ChatRequest) -> ChatResponse:
-    """Invoke the LangGraph agent and return the final assistant message.
+@router.post("/chat")
+async def chat(request: ChatRequest) -> StreamingResponse:
+    """Stream the LangGraph agent reply as Server-Sent Events.
+
+    Each SSE event carries a JSON payload:
+      {"type": "chunk", "content": "<token>"}   — incremental text token
+      {"type": "done"}                           — signals end-of-stream
+      {"type": "error", "detail": "<message>"}  — agent error
 
     Raises 404 if the session does not exist.
-    Raises 500 if the agent fails unexpectedly.
     """
     session = _sessions.get(request.session_id)
 
@@ -60,7 +64,6 @@ async def chat(request: ChatRequest) -> ChatResponse:
         )
 
     # Build LangGraph initial state from the session + the new user message.
-    # Existing messages are carried over so the agent has conversation history.
     # On the very first turn, prepend the system prompt so the LLM knows its
     # identity and rules for the entire session.
     new_message = HumanMessage(content=request.message)
@@ -74,22 +77,45 @@ async def chat(request: ChatRequest) -> ChatResponse:
         "messages": history + [new_message],
     }
 
-    # Run the graph in a thread pool — compiled_graph.invoke() is synchronous.
-    loop = asyncio.get_event_loop()
-    try:
-        final_state = await loop.run_in_executor(
-            None, compiled_graph.invoke, initial_state
-        )
-    except Exception as exc:
-        raise HTTPException(status_code=500, detail=f"Agent error: {exc}") from exc
+    async def event_stream():
+        """Async generator that streams SSE chunks from the LangGraph agent."""
+        full_content_parts: list[str] = []
+        try:
+            async for event in compiled_graph.astream_events(
+                initial_state, version="v2"
+            ):
+                if event["event"] == "on_chat_model_stream":
+                    chunk = event["data"].get("chunk")
+                    if chunk is None:
+                        continue
+                    # AIMessageChunk carries the token in .content
+                    token = chunk.content if hasattr(chunk, "content") else str(chunk)
+                    if not token:
+                        continue
+                    full_content_parts.append(token)
+                    payload = json.dumps({"type": "chunk", "content": token})
+                    yield f"data: {payload}\n\n"
 
-    # Persist the updated message history back into the session.
-    session.messages = final_state["messages"]
+            # Stream finished — persist the updated message history.
+            # We need the final graph state; re-invoke synchronously would double-call,
+            # so we reconstruct the AI message from the collected tokens instead and
+            # append it to the session manually.
+            from langchain_core.messages import AIMessage
 
-    # The last message is the assistant's final reply.
-    last_message = final_state["messages"][-1]
-    content = (
-        last_message.content if hasattr(last_message, "content") else str(last_message)
+            ai_message = AIMessage(content="".join(full_content_parts))
+            session.messages = initial_state["messages"] + [ai_message]
+
+            yield f"data: {json.dumps({'type': 'done'})}\n\n"
+
+        except Exception as exc:
+            payload = json.dumps({"type": "error", "detail": str(exc)})
+            yield f"data: {payload}\n\n"
+
+    return StreamingResponse(
+        event_stream(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "X-Accel-Buffering": "no",
+        },
     )
-
-    return ChatResponse(content=content, role="assistant")
