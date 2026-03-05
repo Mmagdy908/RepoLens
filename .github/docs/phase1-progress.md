@@ -151,7 +151,7 @@ Legend: `[ ]` Not started · `[~]` In progress · `[x]` Done · `[!]` Blocked
 - [x] **T5.11** — Create `backend/app/agent/graph.py`  
        _Build `StateGraph(AgentState)`. Add `agent` node (calls Nova with all tools bound). Add `tools` node (executes selected tool). Add edges with `should_continue` conditional. Compile once as `compiled_graph = graph.compile()` module-level._
 
-- [ ] **T5.12** — Wire agent into `POST /api/chat`  
+- [x] **T5.12** — Wire agent into `POST /api/chat`  
        _Load session → build initial state with `repo_context` + message → invoke `compiled_graph` → return non-streaming response first (streaming in T5.13)._
 
 - [ ] **T5.13** — Implement SSE streaming in `POST /api/chat`  
