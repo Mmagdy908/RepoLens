@@ -10,6 +10,9 @@ from app.agent.tools.folder_explain import get_folder_explanation
 from app.agent.tools.general_qa import answer_general_question
 from app.agent.tools.overview import get_project_overview
 from app.agent.tools.tech_stack import get_tech_stack
+from app.agent.tools.diagram_architecture import generate_architecture_diagram
+from app.agent.tools.diagram_sequence import generate_sequence_diagram
+from app.agent.tools.diagram_component import generate_component_diagram
 from langchain_amazon_nova import ChatAmazonNova
 
 _llm = ChatAmazonNova(
@@ -25,6 +28,9 @@ ALL_TOOLS = [
     get_architecture_summary,
     get_file_explanation,
     get_folder_explanation,
+    generate_architecture_diagram,
+    generate_sequence_diagram,
+    generate_component_diagram,
 ]
 
 _llm_with_tools = _llm.bind_tools(ALL_TOOLS)

@@ -157,22 +157,22 @@ Legend: `[ ]` Not started · `[~]` In progress · `[x]` Done · `[!]` Blocked
 - [x] **T5.13** — Implement SSE streaming in `POST /api/chat`  
        _Replace with `StreamingResponse`. Use `graph.astream_events()`. Filter `on_chat_model_stream`. Yield `data: {chunk}\n\n` SSE format._
 
-- [ ] **T5.14** — Integration test: send "What does this project do?" via API, verify streamed Nova response
+- [x] **T5.14** — Integration test: send "What does this project do?" via API, verify streamed Nova response
 
 ---
 
 ## Milestone 6 — Diagram Tools (Feature 1.4)
 
-- [ ] **T6.1** — Create `backend/app/agent/tools/diagram_architecture.py`  
+- [x] **T6.1** — Create `backend/app/agent/tools/diagram_architecture.py`  
        _`@tool generate_architecture_diagram(focus: str = "") -> str`: prompt Nova to return only a Mermaid `graph TD` block. Strip everything but the fence._
 
-- [ ] **T6.2** — Create `backend/app/agent/tools/diagram_sequence.py`  
+- [x] **T6.2** — Create `backend/app/agent/tools/diagram_sequence.py`  
        _`@tool generate_sequence_diagram(flow: str) -> str`: prompt for `sequenceDiagram`._
 
-- [ ] **T6.3** — Create `backend/app/agent/tools/diagram_component.py`  
+- [x] **T6.3** — Create `backend/app/agent/tools/diagram_component.py`  
        _`@tool generate_component_diagram() -> str`: prompt for component `graph`._
 
-- [ ] **T6.4** — Register all diagram tools in `graph.py`
+- [x] **T6.4** — Register all diagram tools in `graph.py`
 
 ---
 
@@ -212,7 +212,17 @@ Legend: `[ ]` Not started · `[~]` In progress · `[x]` Done · `[!]` Blocked
        _Chip buttons: "Give me an overview", "Show architecture diagram", "What's the tech stack?", "Find design flaws", "Identify security issues"._
 
 - [ ] **T8.7** — Create `src/components/DiagramBlock.tsx`  
-       _Detects Mermaid fence. Dynamic imports `mermaid`. Renders SVG in `useEffect`. Copy source + download SVG buttons._
+       _Dynamically import `mermaid` (browser-only, never at module level). Call `mermaid.initialize()` **once** at the top of the file (outside the component) with:_  
+       - `theme: "base"` — enables full `themeVariables` control  
+       - `themeVariables` tuned for a dark, modern look matching the app's slate/indigo palette:  
+         `primaryColor: "#1e293b"`, `primaryBorderColor: "#6366f1"`, `primaryTextColor: "#f1f5f9"`,  
+         `lineColor: "#475569"`, `edgeLabelBackground: "#1e293b"`,  
+         `actorBkg: "#1e293b"`, `actorBorder: "#6366f1"`, `actorTextColor: "#f1f5f9"`,  
+         `signalColor: "#94a3b8"`, `signalTextColor: "#e2e8f0"`,  
+         `noteBkgColor: "#312e81"`, `noteBorderColor: "#6366f1"`, `noteTextColor: "#e2e8f0"`,  
+         `activationBkgColor: "#4f46e5"`, `activationBorderColor: "#818cf8"`,  
+         `clusterBkg: "#0f172a"`, `titleColor: "#f1f5f9"`, `fontFamily: "ui-monospace, monospace"`  
+       _Props: `code: string` (raw Mermaid source, without the fence). Generate a unique ID per render, call `mermaid.render(id, code)` inside `useEffect`, inject the returned SVG into a `ref` div. Wrap in a `rounded-xl border border-slate-700 bg-slate-900 p-4 overflow-x-auto` container. Add "Copy source" and "Download SVG" icon buttons in the top-right corner._
 
 - [ ] **T8.8** — Create `src/components/ChatMessage.tsx`  
        _Renders a single message bubble. Splits content into text segments and Mermaid blocks. Passes Mermaid blocks to `DiagramBlock`._
