@@ -13,6 +13,9 @@ from app.agent.tools.tech_stack import get_tech_stack
 from app.agent.tools.diagram_architecture import generate_architecture_diagram
 from app.agent.tools.diagram_sequence import generate_sequence_diagram
 from app.agent.tools.diagram_component import generate_component_diagram
+from app.agent.tools.design_flaws import find_design_flaws
+from app.agent.tools.tech_debt import get_tech_debt_summary
+from app.agent.tools.security import get_security_concerns
 from langchain_amazon_nova import ChatAmazonNova
 
 _llm = ChatAmazonNova(
@@ -31,6 +34,9 @@ ALL_TOOLS = [
     generate_architecture_diagram,
     generate_sequence_diagram,
     generate_component_diagram,
+    find_design_flaws,
+    get_tech_debt_summary,
+    get_security_concerns,
 ]
 
 _llm_with_tools = _llm.bind_tools(ALL_TOOLS)

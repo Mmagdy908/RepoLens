@@ -178,16 +178,16 @@ Legend: `[ ]` Not started · `[~]` In progress · `[x]` Done · `[!]` Blocked
 
 ## Milestone 7 — Design Analysis Tools (Feature 1.5)
 
-- [ ] **T7.1** — Create `backend/app/agent/tools/design_flaws.py`  
+- [x] **T7.1** — Create `backend/app/agent/tools/design_flaws.py`  
        _`@tool find_design_flaws() -> str`: structured markdown report with 🔴/🟡/🟢 sections._
 
-- [ ] **T7.2** — Create `backend/app/agent/tools/tech_debt.py`  
+- [x] **T7.2** — Create `backend/app/agent/tools/tech_debt.py`  
        _`@tool get_tech_debt_summary() -> str`._
 
-- [ ] **T7.3** — Create `backend/app/agent/tools/security.py`  
+- [x] **T7.3** — Create `backend/app/agent/tools/security.py`  
        _`@tool get_security_concerns() -> str`._
 
-- [ ] **T7.4** — Register all analysis tools in `graph.py`
+- [x] **T7.4** — Register all analysis tools in `graph.py`
 
 ---
 
