@@ -1,8 +1,9 @@
 import os
 
-from openai import OpenAI
+from langchain_amazon_nova import ChatAmazonNova
 
-client = OpenAI(
+client = ChatAmazonNova(
+    model=os.environ["NOVA_MODEL_ID"],
     api_key=os.environ["NOVA_API_KEY"],
-    base_url="https://api.nova.amazon.com/v1",
+    streaming=True,  # Enable streaming responses
 )

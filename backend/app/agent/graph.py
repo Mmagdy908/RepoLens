@@ -1,7 +1,5 @@
 import os
-
 from langchain_core.messages import BaseMessage
-from langchain_openai import ChatOpenAI
 from langgraph.graph import START, END, StateGraph
 from langgraph.prebuilt import ToolNode, tools_condition
 
@@ -12,15 +10,12 @@ from app.agent.tools.folder_explain import get_folder_explanation
 from app.agent.tools.general_qa import answer_general_question
 from app.agent.tools.overview import get_project_overview
 from app.agent.tools.tech_stack import get_tech_stack
+from langchain_amazon_nova import ChatAmazonNova
 
-# ---------------------------------------------------------------------------
-# Model — OpenAI-compatible client pointed at the Nova endpoint
-# ---------------------------------------------------------------------------
-_llm = ChatOpenAI(
+_llm = ChatAmazonNova(
     model=os.environ["NOVA_MODEL_ID"],
     api_key=os.environ["NOVA_API_KEY"],
-    base_url="https://api.nova.amazon.com/v1",
-    streaming=True,
+    streaming=True,  # Enable streaming responses
 )
 
 ALL_TOOLS = [
@@ -39,10 +34,10 @@ _llm_with_tools = _llm.bind_tools(ALL_TOOLS)
 # ---------------------------------------------------------------------------
 
 
-def agent_node(state: AgentState) -> dict:
+async def agent_node(state: AgentState) -> dict:
     """Call the LLM with the current message history and return the AI reply.
     response is added to current messages because of Annotated[list[AnyMessage], operator.add]"""
-    response: BaseMessage = _llm_with_tools.invoke(state["messages"])
+    response: BaseMessage = await _llm_with_tools.ainvoke(state["messages"])
     return {"messages": [response]}
 
 

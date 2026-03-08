@@ -1,21 +1,20 @@
-import os
 from typing import Annotated
 
-from langchain_core.tools import InjectedToolArg, tool
+from langchain_core.tools import tool
 
 from app.agent.nova_client import client
-
-MODEL_ID = os.environ["NOVA_MODEL_ID"]
+from app.api.tools_usage import _tools_usage_count
+from langgraph.prebuilt import InjectedState
 
 
 @tool
-def get_tech_stack(
-    repo_context: Annotated[str, InjectedToolArg],
+async def get_tech_stack(
+    repo_context: Annotated[str, InjectedState("repo_context")],
 ) -> str:
     """Identify and list the technology stack used in the repository."""
-    response = client.chat.completions.create(
-        model=MODEL_ID,
-        messages=[
+    _tools_usage_count["tech_stack"] += 1
+    response = await client.ainvoke(
+        [
             {
                 "role": "system",
                 "content": (
@@ -31,6 +30,5 @@ def get_tech_stack(
                 "content": "What is the technology stack of this project?",
             },
         ],
-        stream=False,
     )
-    return response.choices[0].message.content or ""
+    return response.content or ""

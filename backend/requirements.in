@@ -5,6 +5,7 @@ uvicorn[standard]
 langgraph
 langchain-core
 openai
+langchain-amazon-nova
 python-dotenv
 python-multipart
 gitpython

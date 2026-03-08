@@ -1,11 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api import chat, health, ingest, sessions
+from app.api import chat, health, ingest, sessions, tools_usage
 
-import dotenv
-
-dotenv.load_dotenv()
 
 app = FastAPI(title="RepoLens API", version="0.1.0")
 
@@ -21,6 +18,7 @@ app.include_router(health.router)
 app.include_router(sessions.router)
 app.include_router(ingest.router)
 app.include_router(chat.router)
+app.include_router(tools_usage.router)
 
 
 @app.get("/")

@@ -12,7 +12,7 @@ import json
 
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse
-from langchain_core.messages import HumanMessage, SystemMessage
+from langchain_core.messages import SystemMessage, AIMessage, HumanMessage
 
 from app.agent.graph import compiled_graph
 from app.api.sessions import _sessions
@@ -42,6 +42,8 @@ fenced code block (```mermaid ... ```).
 assert things you can verify from the repository context.
 - Be concise: prefer short, precise answers over long explanations unless \
 the user explicitly asks for detail.
+
+You are given the repo context if needed in the agent state. Use it to answer questions and decide which tools to call. \
 """
 
 
@@ -88,21 +90,20 @@ async def chat(request: ChatRequest) -> StreamingResponse:
                     chunk = event["data"].get("chunk")
                     if chunk is None:
                         continue
-                    # AIMessageChunk carries the token in .content
-                    token = chunk.content if hasattr(chunk, "content") else str(chunk)
-                    if not token:
-                        continue
-                    full_content_parts.append(token)
-                    payload = json.dumps({"type": "chunk", "content": token})
-                    yield f"data: {payload}\n\n"
+                    token = chunk.content if hasattr(chunk, "content") else ""
+                    if token:
+                        full_content_parts.append(token)
+                        payload = json.dumps({"type": "chunk", "content": token})
+                        yield f"data: {payload}\n\n"
 
             # Stream finished — persist the updated message history.
             # We need the final graph state; re-invoke synchronously would double-call,
             # so we reconstruct the AI message from the collected tokens instead and
             # append it to the session manually.
-            from langchain_core.messages import AIMessage
 
             ai_message = AIMessage(content="".join(full_content_parts))
+            print(ai_message.content)
+
             session.messages = initial_state["messages"] + [ai_message]
 
             yield f"data: {json.dumps({'type': 'done'})}\n\n"
