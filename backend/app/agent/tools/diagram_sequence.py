@@ -41,7 +41,9 @@ async def generate_sequence_diagram(
                     "- Use `loop`, `alt`, `opt` blocks where they reflect real branching logic\n"
                     "- Label every arrow with a short, meaningful description\n"
                     "- Show only the key messages for the requested flow — avoid noise\n"
-                    "- Accurately reflect the actual code\n\n"
+                    "- Accurately reflect the actual code\n"
+                    "- Do NOT invent participants, messages, or flow steps not evidenced in the context\n"
+                    "- If the requested flow is not clearly visible in the context, say so rather than fabricating a diagram\n\n"
                     f"<repo_context>\n{repo_context}\n</repo_context>"
                 ),
             },

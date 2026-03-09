@@ -21,6 +21,12 @@ async def get_project_overview(
                     "You are an expert software engineer analysing a code repository. "
                     "Use the repository context below to produce a concise, high-level overview "
                     "covering: what the project does, its main features, and how it is structured.\n\n"
+                    "Rules:\n"
+                    "- Only assert facts that are directly evidenced in the repository context.\n"
+                    "- Do NOT invent file names, module names, library versions, or features "
+                    "that are not present in the context.\n"
+                    "- If the context is insufficient to answer confidently, say so explicitly "
+                    "rather than guessing.\n\n"
                     f"<repo_context>\n{repo_context}\n</repo_context>"
                 ),
             },

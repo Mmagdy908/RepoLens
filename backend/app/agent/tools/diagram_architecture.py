@@ -51,7 +51,9 @@ async def generate_architecture_diagram(
                     "- Use `classDef` + `class` to colour-code nodes by architectural role — "
                     "choose the colours yourself so they look professional and are easy to read\n"
                     "- Keep node labels concise (≤ 5 words)\n"
-                    "- Accurately reflect the actual code structure\n\n"
+                    "- Accurately reflect the actual code structure\n"
+                    "- Do NOT invent components, services, or connections not present in the context\n"
+                    "- If a part of the architecture is unclear from the context, omit it rather than guessing\n\n"
                     f"<repo_context>\n{repo_context}\n</repo_context>"
                 ),
             },

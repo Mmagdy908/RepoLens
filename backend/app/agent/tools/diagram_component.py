@@ -38,7 +38,9 @@ async def generate_component_diagram(
                     "(e.g. `-->|imports|`, `-->|extends|`)\n"
                     "- Omit standard-library and third-party packages unless architecturally significant\n"
                     "- Keep node labels concise (module or package name only)\n"
-                    "- Accurately reflect the actual code structure\n\n"
+                    "- Accurately reflect the actual code structure\n"
+                    "- Do NOT invent modules, packages, or dependencies not present in the context\n"
+                    "- If a dependency relationship is unclear from the context, omit it rather than guessing\n\n"
                     f"<repo_context>\n{repo_context}\n</repo_context>"
                 ),
             },

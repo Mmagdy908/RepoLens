@@ -17,11 +17,16 @@ async def get_tech_stack(
         [
             {
                 "role": "system",
-                "content": (
-                    "You are an expert software engineer analysing a code repository. "
+                "content": (                    "You are an expert software engineer analysing a code repository. "
                     "Use the repository context below to identify the full technology stack: "
                     "languages, frameworks, libraries, databases, infrastructure, and tooling. "
                     "Present the result as a structured markdown list grouped by category.\n\n"
+                    "Rules:\n"
+                    "- Only list technologies that are directly evidenced in the repository context "
+                    "(e.g. appear in dependency files, imports, or config files).\n"
+                    "- Do NOT invent or assume technologies that are not visible in the context.\n"
+                    "- Do NOT guess version numbers unless they are explicitly stated in the context.\n"
+                    "- If the context is insufficient to identify the full stack, say so explicitly.\n\n"
                     f"<repo_context>\n{repo_context}\n</repo_context>"
                 ),
             },

@@ -18,11 +18,15 @@ async def get_file_explanation(
         [
             {
                 "role": "system",
-                "content": (
-                    "You are an expert software engineer analysing a code repository. "
+                "content": (                    "You are an expert software engineer analysing a code repository. "
                     "Use the repository context below to explain the requested file: "
                     "its purpose, responsibilities, key functions/classes, and how it fits "
                     "into the broader codebase.\n\n"
+                    "Rules:\n"
+                    "- Only describe what is directly visible in the repository context.\n"
+                    "- Do NOT invent function names, class names, or behaviours not present in the context.\n"
+                    "- If the requested file is not found in the context, say so explicitly "
+                    "rather than guessing its contents.\n\n"
                     f"<repo_context>\n{repo_context}\n</repo_context>"
                 ),
             },

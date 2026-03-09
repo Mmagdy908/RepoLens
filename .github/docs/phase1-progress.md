@@ -193,58 +193,86 @@ Legend: `[ ]` Not started · `[~]` In progress · `[x]` Done · `[!]` Blocked
 
 ## Milestone 8 — Next.js Frontend (Feature 1.6)
 
-- [ ] **T8.1** — Create `src/lib/types.ts`  
-       _TypeScript interfaces: `FileNode`, `SessionState`, `IngestResponse`, `ChatMessage`._
+> **Design decisions (locked)**
+>
+> - **Two-page routing**: `/` = landing page, `/chat` = full app shell
+> - **Always dark by default** + light/dark **toggle** in the navbar (stored in `localStorage`, applied via `class="dark"` on `<html>`)
+> - **Icons**: `lucide-react` — install via `docker compose exec frontend npm install lucide-react`
+> - **Logo**: inline SVG lens/eye icon (no external asset)
+> - **Colour palette**: slate/indigo (`slate-900` bg, `indigo-500/600` accents) across both pages
+> - **Ingestion progress**: spinner + sequential status text inside `RepoInputPanel`. Plain `fetch` — status text updates via `useState` before/after each `await` call: `"Cloning repository…"` → `"Filtering files…"` → `"Packing context…"` → `"Ready!"`.
+> - **Chat streaming**: SSE chunks accumulated into a single `ChatMessage` that updates in real-time. `ChatMessage` shows a blinking cursor while `streaming: true`. `ChatInput` is disabled while streaming.
+> - **Agent reasoning stream**: Nova does not emit reasoning tokens on tool-call passes — those produce empty content chunks. The backend emits `{"type":"step","content":"…"}` labels on `on_chain_start` and `on_tool_start`, and `{"type":"text","chunk":"…"}` for final-answer tokens. The frontend renders step labels as transient pills above the assistant bubble, and text chunks in the main bubble.
 
-- [ ] **T8.2** — Create `src/lib/api.ts`  
-       _`ingestRepo()`, `ingestZip()`, `sendMessage()` (SSE consumer returning `AsyncGenerator<string>`)._
+### Foundation
 
-- [ ] **T8.3** — Create `src/components/TokenUsageBar.tsx`  
-       _Props: `used: number`, `budget: number`. Renders a Tailwind progress bar._
+- [x] **T8.0a** — Enrich `POST /api/chat` SSE stream with typed JSON events  
+       _Implemented in `backend/app/api/chat.py`. Nova does not stream reasoning tokens — tool-call passes emit empty content chunks, so no buffering is needed. SSE contract:_  
+       - `{"type":"step","content":"…"}` — emitted on `on_chain_start` (LangGraph) and `on_tool_start` (human-readable label from `_TOOL_REASONING` map)  
+       - `{"type":"text","chunk":"…"}` — emitted on `on_chat_model_stream` when `langgraph_node=="agent"` and the chunk has content (final answer tokens only)  
+       - `{"type":"done"}` — emitted after the stream completes; session history persisted  
+       - `{"type":"error","detail":"…"}` — emitted on exception
 
-- [ ] **T8.4** — Create `src/components/RepoInputPanel.tsx`  
-       _URL text input + "Analyze" button + zip drag-and-drop zone. Calls `api.ingestRepo()` / `api.ingestZip()`. Shows loading state._
+- [ ] **T8.0b** — Install `lucide-react` and update `layout.tsx`  
+       _Run `docker compose exec frontend npm install lucide-react`. Add `className="dark"` to `<html>` in `layout.tsx`._
 
-- [ ] **T8.5** — Create `src/components/FileExplorer.tsx`  
-       _Tree view from `SessionState.file_tree`. Click on a file → dispatches "Explain this file: {path}" message._
+- [ ] **T8.1** — Create `frontend/src/lib/types.ts`  
+       _TypeScript interfaces: `FileNode`, `SessionState`, `IngestResponse`, `ChatMessage` (`role: "user"|"assistant"`, `content: string`, `thinking?: string`, `streaming?: boolean`), `SseEvent` (discriminated union: `{type:"thinking",chunk:string}` | `{type:"text",chunk:string}` | `{type:"done"}`)._
 
-- [ ] **T8.6** — Create `src/components/QuickActions.tsx`  
-       _Chip buttons: "Give me an overview", "Show architecture diagram", "What's the tech stack?", "Find design flaws", "Identify security issues"._
+- [ ] **T8.2** — Create `frontend/src/lib/api.ts`  
+       _`ingestRepo(url: string, onStep: (msg: string) => void): Promise<IngestResponse>` — sets step text before each `await` stage. `ingestZip(file: File, onStep): Promise<IngestResponse>` — same. `sendMessage(sessionId: string, message: string): AsyncGenerator<SseEvent>` — reads SSE, parses JSON, yields typed `SseEvent` objects._
 
-- [ ] **T8.7** — Create `src/components/DiagramBlock.tsx`  
-       _Dynamically import `mermaid` (browser-only, never at module level). Call `mermaid.initialize()` **once** at the top of the file (outside the component) with:_  
-       - `theme: "base"` — enables full `themeVariables` control  
-       - `themeVariables` tuned for a dark, modern look matching the app's slate/indigo palette:  
-         `primaryColor: "#1e293b"`, `primaryBorderColor: "#6366f1"`, `primaryTextColor: "#f1f5f9"`,  
-         `lineColor: "#475569"`, `edgeLabelBackground: "#1e293b"`,  
-         `actorBkg: "#1e293b"`, `actorBorder: "#6366f1"`, `actorTextColor: "#f1f5f9"`,  
-         `signalColor: "#94a3b8"`, `signalTextColor: "#e2e8f0"`,  
-         `noteBkgColor: "#312e81"`, `noteBorderColor: "#6366f1"`, `noteTextColor: "#e2e8f0"`,  
-         `activationBkgColor: "#4f46e5"`, `activationBorderColor: "#818cf8"`,  
-         `clusterBkg: "#0f172a"`, `titleColor: "#f1f5f9"`, `fontFamily: "ui-monospace, monospace"`  
-       _Props: `code: string` (raw Mermaid source, without the fence). Generate a unique ID per render, call `mermaid.render(id, code)` inside `useEffect`, inject the returned SVG into a `ref` div. Wrap in a `rounded-xl border border-slate-700 bg-slate-900 p-4 overflow-x-auto` container. Add "Copy source" and "Download SVG" icon buttons in the top-right corner._
+### Landing Page
 
-- [ ] **T8.8** — Create `src/components/ChatMessage.tsx`  
-       _Renders a single message bubble. Splits content into text segments and Mermaid blocks. Passes Mermaid blocks to `DiagramBlock`._
+- [ ] **T8.3** — Create `frontend/src/components/LandingNav.tsx`  
+       _Top bar: inline SVG lens logo + "RepoLens" wordmark on left. Light/dark toggle button (`Sun`/`Moon` icon from lucide-react) on right. No links. Transparent bg, blurs on scroll._
 
-- [ ] **T8.9** — Create `src/components/ChatInput.tsx`  
-       _Textarea (auto-resize) + send button. Disabled while streaming._
+- [ ] **T8.4** — Create `frontend/src/components/ThemeToggle.tsx`  
+       _Client component. Reads/writes `localStorage("theme")`. Toggles `class="dark"` on `document.documentElement`. Renders `Sun` or `Moon` icon._
 
-- [ ] **T8.10** — Create `src/components/ChatWindow.tsx`  
-       _Scrollable list of `ChatMessage` components. Auto-scrolls to bottom on new message._
+- [ ] **T8.5** — Update `frontend/src/app/page.tsx` — Landing page  
+       _Full-screen hero section with animated CSS gradient mesh background (indigo/violet/slate). Large headline: **"Understand any codebase, instantly."** Subtitle copy. Single CTA button: "Analyze a Repo →" (links to `/chat`). Feature pill row below CTA: `🔍 Architecture · 🛡️ Security · 🧹 Tech Debt · ⚡ Instant Answers`. Uses `LandingNav`._
 
-- [ ] **T8.11** — Create `src/components/AppShell.tsx`  
-       _Three-column layout: FileExplorer sidebar | ChatWindow | (future: details pane). Holds session state via `useState`._
+### Chat Page — Shared Components
 
-- [ ] **T8.12** — Update `src/app/page.tsx`  
-       _Renders `<AppShell>`. Handles top-level session state._
+- [ ] **T8.6** — Create `frontend/src/components/TokenUsageBar.tsx`  
+       _Props: `used: number`, `budget: number`. Slim Tailwind progress bar with label showing `{used.toLocaleString()} / {budget.toLocaleString()} tokens`. Colour: green→yellow→red as usage rises._
 
-- [~] **T8.13** — Update `src/app/layout.tsx`  
-  _Dark mode support via Tailwind `dark` class. Inter font._  
-  ⚠️ `layout.tsx` exists and has `suppressHydrationWarning` + Inter via CSS. Still needs `class="dark"` on `<html>` for Tailwind dark mode to work.
+- [ ] **T8.7** — Create `frontend/src/components/RepoInputPanel.tsx`  
+       _URL text input + "Analyze" button + zip drag-and-drop zone. Calls `api.ingestRepo()` / `api.ingestZip()` with an `onStep` callback. While loading: button replaced by a spinner + a single status text line that updates as each stage resolves ("Cloning repository…" → "Filtering files…" → "Packing context…" → "Ready!"). Displays `TokenUsageBar` after successful ingestion._
 
-- [ ] **T8.14** — End-to-end smoke test in browser  
-       _Paste GitHub URL → ingestion shows file tree + token bar → send "What does this project do?" → see streamed response → ask for architecture diagram → see Mermaid rendered inline._
+- [ ] **T8.8** — Create `frontend/src/components/FileExplorer.tsx`  
+       _Collapsible tree view from `FileNode[]`. Folder nodes toggle open/closed with `ChevronRight`/`ChevronDown` icons. File nodes show file-type icon. Click → dispatches `"Explain this file: {path}"` message to chat._
+
+- [ ] **T8.9** — Create `frontend/src/components/QuickActions.tsx`  
+       _Pill/chip buttons: "Give me an overview", "Show architecture diagram", "What's the tech stack?", "Find design flaws", "Security audit", "Tech debt report". Each click sends the corresponding prompt to chat._
+
+- [ ] **T8.10** — Create `frontend/src/components/DiagramBlock.tsx`  
+       _Dynamically import `mermaid` (browser-only, never at module level). Call `mermaid.initialize()` **once** at module level (outside the component) with `theme: "base"` and full dark themeVariables (slate/indigo palette as specced). Props: `code: string` (raw Mermaid source, no fence). Unique ID per render, `mermaid.render()` in `useEffect`, inject SVG via ref. Container: `rounded-xl border border-slate-700 bg-slate-900 p-4 overflow-x-auto`. "Copy source" (`Copy` icon) and "Download SVG" (`Download` icon) buttons top-right._
+
+- [ ] **T8.11** — Create `frontend/src/components/ChatMessage.tsx`  
+       _Single message bubble. User messages: right-aligned, indigo bg. Assistant messages: left-aligned, slate-800 bg. When `thinking` prop is non-empty, renders a collapsible "🧠 Reasoning…" block above the bubble in italic slate-400 text (auto-expanded while `streaming: true`, collapses when streaming ends). Main `content` split on ` ```mermaid … ``` ` fences: text segments rendered as Markdown, Mermaid blocks passed to `DiagramBlock`. Shows blinking cursor when `streaming: true`._
+
+- [ ] **T8.12** — Create `frontend/src/components/ChatInput.tsx`  
+       _Auto-resize `<textarea>` (grows up to 6 rows). Send on `Enter` (Shift+Enter = newline). `Send` lucide icon button. Entire input disabled while `streaming` prop is true._
+
+- [ ] **T8.13** — Create `frontend/src/components/ChatWindow.tsx`  
+       _Scrollable list of `ChatMessage` components. `useRef` + `useEffect` auto-scroll to bottom on new message. Empty state: centered placeholder "Ask anything about your repository"._
+
+### Chat Page — Shell & Routing
+
+- [ ] **T8.14** — Create `frontend/src/components/AppShell.tsx`  
+       _Two-column layout (on desktop): collapsible left sidebar (`FileExplorer` + `QuickActions`) | main column (`RepoInputPanel` on top when no session, then `ChatWindow` + `ChatInput`). Holds all session state via `useState`: `sessionId`, `fileTree`, `tokenUsed`, `tokenBudget`, `messages`, `isStreaming`. `onSendMessage` handler: appends user bubble, appends empty assistant bubble with `streaming:true`, iterates `api.sendMessage()` `SseEvent` generator — on `thinking` accumulates `chunk` into the bubble's `thinking` field, on `text` accumulates `chunk` into `content`, on `done` sets `streaming:false`. Passes `onSendMessage` down to `ChatInput` and `QuickActions`._
+
+- [ ] **T8.15** — Create `frontend/src/app/chat/page.tsx`  
+       _Route `/chat`. Renders `<AppShell>`. Client component (`"use client"`). Imports `ThemeToggle` for the top bar._
+
+- [~] **T8.16** — Update `frontend/src/app/layout.tsx`  
+  _Add `className="dark"` to `<html>` for Tailwind dark mode default. Inter font already present._  
+  ⚠️ `layout.tsx` exists — just needs `className="dark"` added to `<html>`.
+
+- [ ] **T8.17** — End-to-end smoke test in browser  
+       _Landing page renders, "Analyze a Repo" navigates to `/chat`. Paste GitHub URL → spinner + "Cloning…" → "Filtering…" → "Packing…" → file tree + token bar appear. Send "What does this project do?" → tool pill appears briefly → streaming response bubble fills in. Ask for architecture diagram → Mermaid renders inline. Theme toggle flips light/dark._
 
 ---
 

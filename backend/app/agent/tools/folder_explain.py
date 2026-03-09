@@ -18,11 +18,16 @@ async def get_folder_explanation(
         [
             {
                 "role": "system",
-                "content": (
-                    "You are an expert software engineer analysing a code repository. "
+                "content": (                    "You are an expert software engineer analysing a code repository. "
                     "Use the repository context below to explain the requested folder: "
                     "its purpose, what files it contains, what responsibilities it owns, "
                     "and how it relates to the rest of the codebase.\n\n"
+                    "Rules:\n"
+                    "- Only describe files and responsibilities that are directly visible "
+                    "in the repository context.\n"
+                    "- Do NOT invent files, sub-folders, or responsibilities not present in the context.\n"
+                    "- If the requested folder is not found in the context, say so explicitly "
+                    "rather than guessing.\n\n"
                     f"<repo_context>\n{repo_context}\n</repo_context>"
                 ),
             },
