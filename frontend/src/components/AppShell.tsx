@@ -102,11 +102,11 @@ export default function AppShell() {
               next[next.length - 1] = last;
               return next;
             });
-          } else if (ev.type === "text") {
+          } else if (ev.type === "chunk") {
             setMessages((prev) => {
               const next = [...prev];
               const last = { ...next[next.length - 1] };
-              last.content += ev.chunk;
+              last.content += ev.content;
               next[next.length - 1] = last;
               return next;
             });
