@@ -6,14 +6,18 @@ module.exports = {
     "./src/components/**/*.{ts,tsx}",
     "./src/app/**/*.{ts,tsx}",
   ],  theme: {
-    extend: {
-      animation: {
+    extend: {      animation: {
         "gradient-shift": "gradient-shift 12s ease infinite",
+        blink: "blink 1s step-end infinite",
       },
       keyframes: {
         "gradient-shift": {
           "0%, 100%": { backgroundPosition: "0% 50%" },
           "50%": { backgroundPosition: "100% 50%" },
+        },
+        blink: {
+          "0%, 100%": { opacity: "1" },
+          "50%": { opacity: "0" },
         },
       },
     },
