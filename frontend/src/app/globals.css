@@ -9,3 +9,36 @@
     font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
   }
 }
+
+@layer utilities {
+  /* Dark mode (default): deep indigo/violet/slate animated mesh */
+  .hero-gradient {
+    background: linear-gradient(
+      135deg,
+      #0f172a 0%,
+      #1e1b4b 25%,
+      #312e81 45%,
+      #4c1d95 65%,
+      #1e1b4b 80%,
+      #0f172a 100%
+    );
+    background-size: 300% 300%;
+    animation: gradient-shift 12s ease infinite;
+  }
+
+  /* Light mode override */
+  :root:not(.dark) .hero-gradient {
+    background: linear-gradient(
+      135deg,
+      #e0e7ff 0%,
+      #c7d2fe 25%,
+      #a5b4fc 45%,
+      #818cf8 65%,
+      #c7d2fe 80%,
+      #e0e7ff 100%
+    );
+    background-size: 300% 300%;
+    animation: gradient-shift 12s ease infinite;
+    color: #1e1b4b;
+  }
+}

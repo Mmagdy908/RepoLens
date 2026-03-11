@@ -213,24 +213,24 @@ Legend: `[ ]` Not started · `[~]` In progress · `[x]` Done · `[!]` Blocked
        - `{"type":"done"}` — emitted after the stream completes; session history persisted  
        - `{"type":"error","detail":"…"}` — emitted on exception
 
-- [ ] **T8.0b** — Install `lucide-react` and update `layout.tsx`  
+- [x] **T8.0b** — Install `lucide-react` and update `layout.tsx`  
        _Run `docker compose exec frontend npm install lucide-react`. Add `className="dark"` to `<html>` in `layout.tsx`._
 
-- [ ] **T8.1** — Create `frontend/src/lib/types.ts`  
+- [x] **T8.1** — Create `frontend/src/lib/types.ts`  
        _TypeScript interfaces: `FileNode`, `SessionState`, `IngestResponse`, `ChatMessage` (`role: "user"|"assistant"`, `content: string`, `thinking?: string`, `streaming?: boolean`), `SseEvent` (discriminated union: `{type:"thinking",chunk:string}` | `{type:"text",chunk:string}` | `{type:"done"}`)._
 
-- [ ] **T8.2** — Create `frontend/src/lib/api.ts`  
+- [x] **T8.2** — Create `frontend/src/lib/api.ts`  
        _`ingestRepo(url: string, onStep: (msg: string) => void): Promise<IngestResponse>` — sets step text before each `await` stage. `ingestZip(file: File, onStep): Promise<IngestResponse>` — same. `sendMessage(sessionId: string, message: string): AsyncGenerator<SseEvent>` — reads SSE, parses JSON, yields typed `SseEvent` objects._
 
 ### Landing Page
 
-- [ ] **T8.3** — Create `frontend/src/components/LandingNav.tsx`  
+- [x] **T8.3** — Create `frontend/src/components/LandingNav.tsx`  
        _Top bar: inline SVG lens logo + "RepoLens" wordmark on left. Light/dark toggle button (`Sun`/`Moon` icon from lucide-react) on right. No links. Transparent bg, blurs on scroll._
 
-- [ ] **T8.4** — Create `frontend/src/components/ThemeToggle.tsx`  
+- [x] **T8.4** — Create `frontend/src/components/ThemeToggle.tsx`  
        _Client component. Reads/writes `localStorage("theme")`. Toggles `class="dark"` on `document.documentElement`. Renders `Sun` or `Moon` icon._
 
-- [ ] **T8.5** — Update `frontend/src/app/page.tsx` — Landing page  
+- [x] **T8.5** — Update `frontend/src/app/page.tsx` — Landing page  
        _Full-screen hero section with animated CSS gradient mesh background (indigo/violet/slate). Large headline: **"Understand any codebase, instantly."** Subtitle copy. Single CTA button: "Analyze a Repo →" (links to `/chat`). Feature pill row below CTA: `🔍 Architecture · 🛡️ Security · 🧹 Tech Debt · ⚡ Instant Answers`. Uses `LandingNav`._
 
 ### Chat Page — Shared Components
