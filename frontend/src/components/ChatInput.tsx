@@ -50,9 +50,8 @@ export default function ChatInput({
   );
 
   const canSend = !streaming && value.trim().length > 0;
-
   return (
-    <div className="flex items-end gap-2 rounded-xl border border-slate-700 bg-slate-800 px-3 py-2 transition focus-within:border-indigo-500 focus-within:ring-1 focus-within:ring-indigo-500">
+    <div className="flex items-end gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 transition focus-within:border-indigo-500 focus-within:ring-1 focus-within:ring-indigo-500 dark:border-slate-700 dark:bg-slate-800">
       <textarea
         ref={textareaRef}
         rows={1}
@@ -61,7 +60,7 @@ export default function ChatInput({
         onKeyDown={handleKeyDown}
         disabled={streaming}
         placeholder={placeholder}
-        className="flex-1 resize-none bg-transparent text-sm text-slate-100 placeholder-slate-500 outline-none disabled:opacity-50"
+        className="flex-1 resize-none bg-transparent text-sm text-slate-800 placeholder-slate-400 outline-none disabled:opacity-50 dark:text-slate-100 dark:placeholder-slate-500"
         style={{ minHeight: "1.5rem" }}
       />
       <button

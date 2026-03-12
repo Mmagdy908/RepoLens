@@ -147,17 +147,16 @@ export default function AppShell() {
     },
     [isStreaming, sessionId]
   );
-
   // -------------------------------------------------------------------------
   // Render
   // -------------------------------------------------------------------------
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-900 text-slate-100">
+    <div className="flex h-screen overflow-hidden bg-white text-slate-800 dark:bg-slate-900 dark:text-slate-100">
       {/* ------------------------------------------------------------------ */}
       {/* Left sidebar                                                         */}
       {/* ------------------------------------------------------------------ */}
       <aside
-        className={`flex flex-col border-r border-slate-800 bg-slate-900 transition-all duration-200 ${
+        className={`flex flex-col border-r border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900 transition-all duration-200 ${
           sidebarOpen ? "w-64 min-w-[16rem]" : "w-0 min-w-0 overflow-hidden"
         }`}
       >
@@ -180,8 +179,7 @@ export default function AppShell() {
                 <circle cx="11" cy="11" r="8" />
                 <line x1="21" y1="21" x2="16.65" y2="16.65" />
                 <circle cx="11" cy="11" r="3" />
-              </svg>
-              <span className="text-sm font-semibold tracking-tight text-slate-100">
+              </svg>              <span className="text-sm font-semibold tracking-tight text-slate-800 dark:text-slate-100">
                 RepoLens
               </span>
             </div>
@@ -207,12 +205,11 @@ export default function AppShell() {
       {/* Main column                                                          */}
       {/* ------------------------------------------------------------------ */}
       <div className="flex flex-1 flex-col overflow-hidden">
-        {/* Top bar */}
-        <header className="flex items-center gap-2 border-b border-slate-800 px-4 py-2">
+        {/* Top bar */}        <header className="flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 px-4 py-2">
           <button
             onClick={() => setSidebarOpen((o) => !o)}
             title={sidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
-            className="rounded-md p-1.5 text-slate-400 hover:bg-slate-800 hover:text-slate-200 transition-colors"
+            className="rounded-md p-1.5 text-slate-500 hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200 transition-colors"
           >
             {sidebarOpen ? (
               <PanelLeftClose size={16} />
@@ -220,7 +217,7 @@ export default function AppShell() {
               <PanelLeftOpen size={16} />
             )}
           </button>
-          <span className="text-sm font-medium text-slate-300">
+          <span className="text-sm font-medium text-slate-600 dark:text-slate-300">
             {sessionId ? "Chat" : "New Analysis"}
           </span>
         </header>

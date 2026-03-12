@@ -20,19 +20,18 @@ type CodeProps = { className?: string; children?: React.ReactNode };
 type AnchorProps = { href?: string; children?: React.ReactNode };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const markdownComponents: Record<string, React.ComponentType<any>> = {
-  h1: ({ children }: NodeProps) => (
-    <h1 className="mb-3 mt-4 text-lg font-bold text-slate-100 first:mt-0">
+const markdownComponents: Record<string, React.ComponentType<any>> = {  h1: ({ children }: NodeProps) => (
+    <h1 className="mb-3 mt-4 text-lg font-bold text-slate-800 first:mt-0 dark:text-slate-100">
       {children}
     </h1>
   ),
   h2: ({ children }: NodeProps) => (
-    <h2 className="mb-2 mt-4 text-base font-bold text-slate-100 first:mt-0">
+    <h2 className="mb-2 mt-4 text-base font-bold text-slate-800 first:mt-0 dark:text-slate-100">
       {children}
     </h2>
   ),
   h3: ({ children }: NodeProps) => (
-    <h3 className="mb-2 mt-3 text-sm font-bold text-slate-200 first:mt-0">
+    <h3 className="mb-2 mt-3 text-sm font-bold text-slate-700 first:mt-0 dark:text-slate-200">
       {children}
     </h3>
   ),
@@ -47,8 +46,7 @@ const markdownComponents: Record<string, React.ComponentType<any>> = {
   ),
   li: ({ children }: NodeProps) => (
     <li className="leading-relaxed">{children}</li>
-  ),
-  code: ({ className, children }: CodeProps) => {
+  ),  code: ({ className, children }: CodeProps) => {
     const language = (className ?? "").replace("language-", "");
     if (language === "mermaid") {
       return <DiagramBlock code={String(children).trim()} />;
@@ -57,43 +55,43 @@ const markdownComponents: Record<string, React.ComponentType<any>> = {
       return <code className={className}>{children}</code>;
     }
     return (
-      <code className="rounded bg-slate-700 px-1 py-0.5 font-mono text-xs text-indigo-300">
+      <code className="rounded bg-slate-200 px-1 py-0.5 font-mono text-xs text-indigo-700 dark:bg-slate-700 dark:text-indigo-300">
         {children}
       </code>
     );
   },
   pre: ({ children }: NodeProps) => (
-    <pre className="mb-3 overflow-x-auto rounded-lg border border-slate-700 bg-slate-900 p-3 font-mono text-xs text-slate-300">
+    <pre className="mb-3 overflow-x-auto rounded-lg border border-slate-200 bg-slate-100 p-3 font-mono text-xs text-slate-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300">
       {children}
     </pre>
   ),
   blockquote: ({ children }: NodeProps) => (
-    <blockquote className="mb-2 border-l-2 border-indigo-500 pl-3 italic text-slate-400">
+    <blockquote className="mb-2 border-l-2 border-indigo-400 pl-3 italic text-slate-500 dark:border-indigo-500 dark:text-slate-400">
       {children}
     </blockquote>
   ),
   strong: ({ children }: NodeProps) => (
-    <strong className="font-semibold text-slate-100">{children}</strong>
+    <strong className="font-semibold text-slate-800 dark:text-slate-100">{children}</strong>
   ),
   em: ({ children }: NodeProps) => (
-    <em className="italic text-slate-300">{children}</em>
+    <em className="italic text-slate-600 dark:text-slate-300">{children}</em>
   ),
-  hr: () => <hr className="my-3 border-slate-700" />,
+  hr: () => <hr className="my-3 border-slate-200 dark:border-slate-700" />,
   table: ({ children }: NodeProps) => (
     <div className="mb-3 overflow-x-auto">
       <table className="w-full border-collapse text-xs">{children}</table>
     </div>
   ),
   thead: ({ children }: NodeProps) => (
-    <thead className="bg-slate-700">{children}</thead>
+    <thead className="bg-slate-100 dark:bg-slate-700">{children}</thead>
   ),
   th: ({ children }: NodeProps) => (
-    <th className="border border-slate-600 px-3 py-1.5 text-left font-semibold text-slate-200">
+    <th className="border border-slate-200 px-3 py-1.5 text-left font-semibold text-slate-700 dark:border-slate-600 dark:text-slate-200">
       {children}
     </th>
   ),
   td: ({ children }: NodeProps) => (
-    <td className="border border-slate-600 px-3 py-1.5 text-slate-300">
+    <td className="border border-slate-200 px-3 py-1.5 text-slate-600 dark:border-slate-600 dark:text-slate-300">
       {children}
     </td>
   ),
@@ -132,12 +130,11 @@ function ThinkingBlock({
     if (streaming) setOpen(true);
     else setOpen(false);
   }, [streaming]);
-
   return (
-    <div className="mb-2 rounded-lg border border-slate-700 bg-slate-900/60 text-sm">
+    <div className="mb-2 rounded-lg border border-slate-200 bg-slate-50 text-sm dark:border-slate-700 dark:bg-slate-900/60">
       <button
         onClick={() => setOpen((o) => !o)}
-        className="flex w-full items-center gap-1.5 px-3 py-2 text-slate-400 transition-colors hover:text-slate-200"
+        className="flex w-full items-center gap-1.5 px-3 py-2 text-slate-500 transition-colors hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
       >
         {open ? (
           <ChevronDown size={13} className="shrink-0" />
@@ -150,7 +147,7 @@ function ThinkingBlock({
         )}
       </button>
       {open && (
-        <div className="border-t border-slate-700 px-3 py-2 italic leading-relaxed text-slate-400 whitespace-pre-wrap">
+        <div className="border-t border-slate-200 px-3 py-2 italic leading-relaxed text-slate-500 whitespace-pre-wrap dark:border-slate-700 dark:text-slate-400">
           {text}
         </div>
       )}
@@ -284,7 +281,7 @@ export default function ChatMessage({ message }: ChatMessageProps) {
           <ThinkingBlock text={message.thinking} streaming={streaming} />
         )}
 
-        <div className="rounded-2xl rounded-tl-sm bg-slate-800 px-4 py-3 text-sm text-slate-100 shadow-md">
+        <div className="rounded-2xl rounded-tl-sm bg-slate-100 px-4 py-3 text-sm text-slate-800 shadow-md dark:bg-slate-800 dark:text-slate-100">
           {/* Waiting cursor before first chars arrive */}
           {!visibleText && streaming && (
             <span className="inline-block h-4 w-0.5 animate-blink rounded-sm bg-indigo-400" />

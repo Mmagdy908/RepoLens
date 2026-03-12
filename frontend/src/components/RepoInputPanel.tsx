@@ -74,15 +74,13 @@ export default function RepoInputPanel({ onIngested }: RepoInputPanelProps) {
     const file = e.dataTransfer.files?.[0];
     if (file) handleZipFile(file);
   }
-
   return (
-    <div className="w-full space-y-4 rounded-xl border border-slate-700 bg-slate-800/60 p-5 backdrop-blur">
+    <div className="w-full space-y-4 rounded-xl border border-slate-200 bg-slate-50 p-5 backdrop-blur dark:border-slate-700 dark:bg-slate-800/60">
       {/* URL input */}
       <form onSubmit={handleUrlSubmit} className="flex gap-2">
-        <div className="relative flex-1">
-          <Link
+        <div className="relative flex-1">          <Link
             size={15}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-400"
           />
           <input
             type="url"
@@ -90,7 +88,7 @@ export default function RepoInputPanel({ onIngested }: RepoInputPanelProps) {
             onChange={(e) => setUrl(e.target.value)}
             placeholder="https://github.com/owner/repo"
             disabled={loading}
-            className="w-full rounded-lg border border-slate-600 bg-slate-900 py-2 pl-9 pr-3 text-sm text-slate-100 placeholder-slate-500 outline-none transition focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 disabled:opacity-50"
+            className="w-full rounded-lg border border-slate-300 bg-white py-2 pl-9 pr-3 text-sm text-slate-800 placeholder-slate-400 outline-none transition focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 disabled:opacity-50 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:placeholder-slate-500"
           />
         </div>
         <button
@@ -109,16 +107,15 @@ export default function RepoInputPanel({ onIngested }: RepoInputPanelProps) {
         </button>
       </form>
 
-      {/* Zip drag-and-drop zone */}
-      <div
+      {/* Zip drag-and-drop zone */}        <div
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
         onClick={() => !loading && fileInputRef.current?.click()}
         className={`flex cursor-pointer flex-col items-center justify-center gap-1.5 rounded-lg border-2 border-dashed px-4 py-5 text-sm transition ${
           dragging
-            ? "border-indigo-400 bg-indigo-950/40 text-indigo-300"
-            : "border-slate-600 text-slate-400 hover:border-slate-500 hover:text-slate-300"
+            ? "border-indigo-400 bg-indigo-50 text-indigo-700"
+            : "border-slate-300 text-slate-500 hover:border-slate-400 hover:text-slate-700"
         } ${loading ? "pointer-events-none opacity-50" : ""}`}
       >
         <Upload size={18} />
@@ -134,17 +131,15 @@ export default function RepoInputPanel({ onIngested }: RepoInputPanelProps) {
         />
       </div>
 
-      {/* Status line shown while loading */}
-      {loading && status && (
-        <p className="flex items-center gap-2 text-xs text-slate-400">
+      {/* Status line shown while loading */}      {loading && status && (
+        <p className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
           <Loader2 size={12} className="animate-spin" />
           {status}
         </p>
       )}
 
-      {/* Error message */}
-      {error && (
-        <p className="rounded-lg border border-red-700 bg-red-950/40 px-3 py-2 text-xs text-red-400">
+      {/* Error message */}      {error && (
+        <p className="rounded-lg border border-red-700 bg-red-50 px-3 py-2 text-xs text-red-700 dark:bg-red-950/40 dark:text-red-400 dark:border-red-700">
           {error}
         </p>
       )}

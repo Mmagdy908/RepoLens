@@ -10,9 +10,8 @@
 import AppShell from "@/components/AppShell";
 import ThemeToggle from "@/components/ThemeToggle";
 
-export default function ChatPage() {
-  return (
-    <div className="relative h-screen overflow-hidden">
+export default function ChatPage() {  return (
+    <div className="relative h-screen overflow-hidden bg-white dark:bg-slate-900">
       {/* Theme toggle — floated top-right over the shell */}
       <div className="absolute right-4 top-2 z-50">
         <ThemeToggle />

@@ -121,9 +121,8 @@ function FileIcon({ name, isBinary }: { name: string; isBinary: boolean }) {
   if (ext === "json" || ext === "yaml" || ext === "yml" || ext === "toml")
     return <FileJson size={13} className={cls} />;
   if (CODE_EXTS.has(ext))
-    return <FileCode size={13} className="shrink-0 text-indigo-400" />;
-  if (DOC_EXTS.has(ext))
-    return <FileText size={13} className="shrink-0 text-slate-300" />;
+    return <FileCode size={13} className="shrink-0 text-indigo-400" />;  if (DOC_EXTS.has(ext))
+    return <FileText size={13} className="shrink-0 text-slate-400 dark:text-slate-300" />;
   return <File size={13} className={cls} />;
 }
 
@@ -141,10 +140,9 @@ function FolderNode({ entry, depth, onFileClick }: FolderNodeProps) {
   const [open, setOpen] = useState(depth < 2);
 
   return (
-    <li>
-      <button
+    <li>      <button
         onClick={() => setOpen((o) => !o)}
-        className="flex w-full items-center gap-1.5 rounded px-1 py-0.5 text-left text-xs text-slate-300 hover:bg-slate-700/60"
+        className="flex w-full items-center gap-1.5 rounded px-1 py-0.5 text-left text-xs text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-700/60"
         style={{ paddingLeft: `${depth * 12 + 4}px` }}
       >
         {open ? (
@@ -197,7 +195,7 @@ function FileNodeItem({ entry, depth, onFileClick }: FileNodeItemProps) {
       <button
         onClick={() => onFileClick(entry.node.path)}
         title={entry.node.path}
-        className="flex w-full items-center gap-1.5 rounded px-1 py-0.5 text-left text-xs text-slate-400 hover:bg-slate-700/60 hover:text-slate-200"
+        className="flex w-full items-center gap-1.5 rounded px-1 py-0.5 text-left text-xs text-slate-500 hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-700/60 dark:hover:text-slate-200"
         style={{ paddingLeft: `${depth * 12 + 4 + 14}px` }}
       >
         <FileIcon name={entry.name} isBinary={entry.node.is_binary} />

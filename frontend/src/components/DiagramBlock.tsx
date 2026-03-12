@@ -136,18 +136,17 @@ export default function DiagramBlock({ code }: DiagramBlockProps) {
   // -------------------------------------------------------------------------
   // Render
   // -------------------------------------------------------------------------
-
   return (
-    <div className="relative rounded-xl border border-slate-700 bg-slate-900 p-4 overflow-x-auto my-4">
+    <div className="relative rounded-xl border border-slate-200 bg-slate-50 p-4 overflow-x-auto my-4 dark:border-slate-700 dark:bg-slate-900">
       {/* Action buttons — top-right */}
       <div className="absolute top-2 right-2 flex gap-1 z-10">
         <button
           onClick={handleCopySource}
           title="Copy Mermaid source"
-          className="flex items-center gap-1 rounded-md bg-slate-800 px-2 py-1 text-xs text-slate-400 hover:text-slate-100 hover:bg-slate-700 transition-colors border border-slate-700"
+          className="flex items-center gap-1 rounded-md bg-white border border-slate-200 px-2 py-1 text-xs text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400 dark:hover:text-slate-100 dark:hover:bg-slate-700"
         >
           {copied ? (
-            <Check size={13} className="text-green-400" />
+            <Check size={13} className="text-green-500" />
           ) : (
             <Copy size={13} />
           )}
@@ -156,7 +155,7 @@ export default function DiagramBlock({ code }: DiagramBlockProps) {
         <button
           onClick={handleDownloadSvg}
           title="Download SVG"
-          className="flex items-center gap-1 rounded-md bg-slate-800 px-2 py-1 text-xs text-slate-400 hover:text-slate-100 hover:bg-slate-700 transition-colors border border-slate-700"
+          className="flex items-center gap-1 rounded-md bg-white border border-slate-200 px-2 py-1 text-xs text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400 dark:hover:text-slate-100 dark:hover:bg-slate-700"
         >
           <Download size={13} />
           <span>Download SVG</span>
