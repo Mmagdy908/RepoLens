@@ -9,6 +9,7 @@ module.exports = {
     extend: {      animation: {
         "gradient-shift": "gradient-shift 12s ease infinite",
         blink: "blink 1s step-end infinite",
+        "fade-in": "fade-in 0.18s ease-out both",
       },
       keyframes: {
         "gradient-shift": {
@@ -18,6 +19,9 @@ module.exports = {
         blink: {
           "0%, 100%": { opacity: "1" },
           "50%": { opacity: "0" },
+        },        "fade-in": {
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" },
         },
       },
     },

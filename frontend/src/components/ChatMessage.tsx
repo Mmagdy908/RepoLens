@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ChevronDown, ChevronRight } from "lucide-react";
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const ReactMarkdown = require("react-markdown").default as React.ComponentType<{
@@ -28,28 +28,32 @@ type AnchorProps = { href?: string; children?: React.ReactNode };
 const markdownComponents: Record<string, React.ComponentType<any>> = {
   // eslint-disable-line @typescript-eslint/no-explicit-any
   h1: ({ children }: NodeProps) => (
-    <h1 className="mb-3 mt-4 text-lg font-bold text-slate-100 first:mt-0">
+    <h1 className="mb-3 mt-4 text-lg font-bold text-slate-100 first:mt-0 animate-fade-in">
       {children}
     </h1>
   ),
   h2: ({ children }: NodeProps) => (
-    <h2 className="mb-2 mt-4 text-base font-bold text-slate-100 first:mt-0">
+    <h2 className="mb-2 mt-4 text-base font-bold text-slate-100 first:mt-0 animate-fade-in">
       {children}
     </h2>
   ),
   h3: ({ children }: NodeProps) => (
-    <h3 className="mb-2 mt-3 text-sm font-bold text-slate-200 first:mt-0">
+    <h3 className="mb-2 mt-3 text-sm font-bold text-slate-200 first:mt-0 animate-fade-in">
       {children}
     </h3>
   ),
   p: ({ children }: NodeProps) => (
-    <p className="mb-2 last:mb-0 leading-relaxed">{children}</p>
+    <p className="mb-2 last:mb-0 leading-relaxed animate-fade-in">{children}</p>
   ),
   ul: ({ children }: NodeProps) => (
-    <ul className="mb-2 ml-4 list-disc space-y-1">{children}</ul>
+    <ul className="mb-2 ml-4 list-disc space-y-1 animate-fade-in">
+      {children}
+    </ul>
   ),
   ol: ({ children }: NodeProps) => (
-    <ol className="mb-2 ml-4 list-decimal space-y-1">{children}</ol>
+    <ol className="mb-2 ml-4 list-decimal space-y-1 animate-fade-in">
+      {children}
+    </ol>
   ),
   li: ({ children }: NodeProps) => (
     <li className="leading-relaxed">{children}</li>
@@ -172,9 +176,94 @@ interface ChatMessageProps {
   message: ChatMessageType;
 }
 
+// ms between each word token being revealed
+const WORD_INTERVAL_MS = 40;
+
+/**
+ * Strip markdown syntax characters so the drip display shows readable plain
+ * text without raw asterisks, hashes, backticks, etc.
+ */
+function stripMarkdown(text: string): string {
+  return (
+    text
+      // Remove ATX headings markers (# ## ### …)
+      .replace(/^#{1,6}\s+/gm, "")
+      // Bold+italic ***…*** / **…** / *…* / ___…___ / __…__ / _…_
+      .replace(/(\*{1,3}|_{1,3})(.*?)\1/g, "$2")
+      // Inline code `…`
+      .replace(/`([^`]+)`/g, "$1")
+      // Fenced code blocks ```…```
+      .replace(/```[\s\S]*?```/g, "")
+      // Blockquote >
+      .replace(/^>\s?/gm, "")
+      // Horizontal rules
+      .replace(/^[-*_]{3,}\s*$/gm, "")
+      // Links [text](url) → text
+      .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+      // Images ![alt](url) → alt
+      .replace(/!\[([^\]]*)\]\([^)]+\)/g, "$1")
+      // Table pipes
+      .replace(/\|/g, " ")
+      .trim()
+  );
+}
+
 export default function ChatMessage({ message }: ChatMessageProps) {
   const isUser = message.role === "user";
   const streaming = message.streaming ?? false;
+
+  // Queue of all words received from the backend (grows as chunks arrive).
+  // `displayCount` is how many we've actually shown — increments on a timer.
+  const queueRef = useRef<string[]>([]);
+  const [displayCount, setDisplayCount] = useState(0);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  // Keep queue in sync with incoming content — use stripped plain text for drip
+  useEffect(() => {
+    if (!streaming) return;
+    queueRef.current = stripMarkdown(message.content).split(/(\s+)/);
+  }, [message.content, streaming]);
+  // Drip timer: runs while streaming OR while there are still queued words to show
+  const [dripDone, setDripDone] = useState(false);
+
+  useEffect(() => {
+    if (streaming) {
+      // New message starting — reset everything
+      setDisplayCount(0);
+      setDripDone(false);
+      queueRef.current = [];
+
+      if (intervalRef.current) clearInterval(intervalRef.current);
+      intervalRef.current = setInterval(() => {
+        setDisplayCount((prev) => {
+          const total = queueRef.current.length;
+          if (prev < total) return prev + 1;
+          return prev;
+        });
+      }, WORD_INTERVAL_MS);
+    } else {
+      // Streaming stopped — keep the interval going until queue is drained,
+      // then mark drip as done so we swap to full markdown.
+      if (intervalRef.current) clearInterval(intervalRef.current);
+      intervalRef.current = setInterval(() => {
+        setDisplayCount((prev) => {
+          const total = queueRef.current.length;
+          if (prev < total) return prev + 1;
+          // Queue fully drained — stop and switch to markdown
+          clearInterval(intervalRef.current!);
+          intervalRef.current = null;
+          setDripDone(true);
+          return prev;
+        });
+      }, WORD_INTERVAL_MS);
+    }
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+  }, [streaming]);
 
   if (isUser) {
     return (
@@ -198,17 +287,23 @@ export default function ChatMessage({ message }: ChatMessageProps) {
 
         {/* Assistant bubble */}
         <div className="rounded-2xl rounded-tl-sm bg-slate-800 px-4 py-3 text-sm text-slate-100 shadow-md">
+          {" "}
           {/* Waiting cursor before first token arrives */}
           {!message.content && streaming && (
-            <span className="inline-block h-4 w-1 animate-pulse rounded-sm bg-indigo-400" />
+            <span className="inline-block h-4 w-0.5 animate-blink rounded-sm bg-indigo-400" />
           )}
-
-          {/* Rendered markdown — ```mermaid fences become <DiagramBlock> */}
-          {message.content && <MarkdownContent text={message.content} />}
-
-          {/* Blinking cursor while streaming */}
-          {streaming && message.content && (
-            <span className="ml-0.5 inline-block h-4 w-1 animate-pulse rounded-sm bg-indigo-400 align-middle" />
+          {/* ── DRIP: plain text word-by-word until queue is drained ── */}
+          {!dripDone && message.content && (
+            <p className="whitespace-pre-wrap leading-relaxed">
+              {queueRef.current.slice(0, displayCount).join("")}
+              {(streaming || displayCount < queueRef.current.length) && (
+                <span className="ml-0.5 inline-block h-[0.9em] w-0.5 animate-blink rounded-sm bg-indigo-400 align-middle" />
+              )}
+            </p>
+          )}
+          {/* ── DONE: full markdown render once drip finishes ── */}
+          {dripDone && message.content && (
+            <MarkdownContent text={message.content} />
           )}
         </div>
       </div>
