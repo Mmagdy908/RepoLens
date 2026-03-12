@@ -137,7 +137,7 @@ interface FolderNodeProps {
 }
 
 function FolderNode({ entry, depth, onFileClick }: FolderNodeProps) {
-  const [open, setOpen] = useState(depth < 2);
+  const [open, setOpen] = useState(false);
 
   return (
     <li>      <button
