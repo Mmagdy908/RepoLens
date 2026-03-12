@@ -51,7 +51,7 @@ export default function ChatInput({
 
   const canSend = !streaming && value.trim().length > 0;
   return (
-    <div className="flex items-end gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 transition focus-within:border-indigo-500 focus-within:ring-1 focus-within:ring-indigo-500 dark:border-slate-700 dark:bg-slate-800">
+    <div className="flex items-end gap-2 rounded-xl border border-slate-300 bg-slate-200 px-3 py-2 transition focus-within:border-indigo-500 focus-within:bg-white focus-within:ring-1 focus-within:ring-indigo-500 dark:border-slate-700 dark:bg-slate-800 dark:focus-within:bg-slate-800">
       <textarea
         ref={textareaRef}
         rows={1}

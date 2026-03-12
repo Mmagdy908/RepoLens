@@ -27,7 +27,10 @@ export default function ChatWindow({ messages }: ChatWindowProps) {
     return (
       <div className="flex flex-1 flex-col items-center justify-center gap-3 text-center">
         <div className="rounded-full border border-slate-200 bg-slate-100 p-4 dark:border-slate-700 dark:bg-slate-800">
-          <MessageSquare size={24} className="text-slate-400 dark:text-slate-500" />
+          <MessageSquare
+            size={24}
+            className="text-slate-400 dark:text-slate-500"
+          />
         </div>
         <p className="text-sm text-slate-400 dark:text-slate-500">
           Ask anything about your repository
