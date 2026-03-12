@@ -15,45 +15,35 @@ import React from "react";
 import DiagramBlock from "./DiagramBlock";
 import type { ChatMessage as ChatMessageType } from "@/lib/types";
 
-// ---------------------------------------------------------------------------
-// Prop shapes for the react-markdown component overrides
-// ---------------------------------------------------------------------------
 type NodeProps = { children?: React.ReactNode };
 type CodeProps = { className?: string; children?: React.ReactNode };
 type AnchorProps = { href?: string; children?: React.ReactNode };
 
-// ---------------------------------------------------------------------------
-// Component map passed to ReactMarkdown
-// ---------------------------------------------------------------------------
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const markdownComponents: Record<string, React.ComponentType<any>> = {
-  // eslint-disable-line @typescript-eslint/no-explicit-any
   h1: ({ children }: NodeProps) => (
-    <h1 className="mb-3 mt-4 text-lg font-bold text-slate-100 first:mt-0 animate-fade-in">
+    <h1 className="mb-3 mt-4 text-lg font-bold text-slate-100 first:mt-0">
       {children}
     </h1>
   ),
   h2: ({ children }: NodeProps) => (
-    <h2 className="mb-2 mt-4 text-base font-bold text-slate-100 first:mt-0 animate-fade-in">
+    <h2 className="mb-2 mt-4 text-base font-bold text-slate-100 first:mt-0">
       {children}
     </h2>
   ),
   h3: ({ children }: NodeProps) => (
-    <h3 className="mb-2 mt-3 text-sm font-bold text-slate-200 first:mt-0 animate-fade-in">
+    <h3 className="mb-2 mt-3 text-sm font-bold text-slate-200 first:mt-0">
       {children}
     </h3>
   ),
   p: ({ children }: NodeProps) => (
-    <p className="mb-2 last:mb-0 leading-relaxed animate-fade-in">{children}</p>
+    <p className="mb-2 last:mb-0 leading-relaxed">{children}</p>
   ),
   ul: ({ children }: NodeProps) => (
-    <ul className="mb-2 ml-4 list-disc space-y-1 animate-fade-in">
-      {children}
-    </ul>
+    <ul className="mb-2 ml-4 list-disc space-y-1">{children}</ul>
   ),
   ol: ({ children }: NodeProps) => (
-    <ol className="mb-2 ml-4 list-decimal space-y-1 animate-fade-in">
-      {children}
-    </ol>
+    <ol className="mb-2 ml-4 list-decimal space-y-1">{children}</ol>
   ),
   li: ({ children }: NodeProps) => (
     <li className="leading-relaxed">{children}</li>
@@ -128,7 +118,7 @@ function MarkdownContent({ text }: { text: string }) {
 }
 
 // ---------------------------------------------------------------------------
-// ThinkingBlock — collapsible reasoning section
+// ThinkingBlock
 // ---------------------------------------------------------------------------
 function ThinkingBlock({
   text,
@@ -138,7 +128,6 @@ function ThinkingBlock({
   streaming: boolean;
 }) {
   const [open, setOpen] = useState(streaming);
-
   useEffect(() => {
     if (streaming) setOpen(true);
     else setOpen(false);
@@ -176,94 +165,102 @@ interface ChatMessageProps {
   message: ChatMessageType;
 }
 
-// ms between each word token being revealed
-const WORD_INTERVAL_MS = 40;
-
-/**
- * Strip markdown syntax characters so the drip display shows readable plain
- * text without raw asterisks, hashes, backticks, etc.
- */
-function stripMarkdown(text: string): string {
-  return (
-    text
-      // Remove ATX headings markers (# ## ### …)
-      .replace(/^#{1,6}\s+/gm, "")
-      // Bold+italic ***…*** / **…** / *…* / ___…___ / __…__ / _…_
-      .replace(/(\*{1,3}|_{1,3})(.*?)\1/g, "$2")
-      // Inline code `…`
-      .replace(/`([^`]+)`/g, "$1")
-      // Fenced code blocks ```…```
-      .replace(/```[\s\S]*?```/g, "")
-      // Blockquote >
-      .replace(/^>\s?/gm, "")
-      // Horizontal rules
-      .replace(/^[-*_]{3,}\s*$/gm, "")
-      // Links [text](url) → text
-      .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
-      // Images ![alt](url) → alt
-      .replace(/!\[([^\]]*)\]\([^)]+\)/g, "$1")
-      // Table pipes
-      .replace(/\|/g, " ")
-      .trim()
-  );
-}
+// Characters of raw markdown revealed per timer tick
+const CHARS_PER_TICK = 6;
+// ms between ticks
+const TICK_MS = 30;
 
 export default function ChatMessage({ message }: ChatMessageProps) {
   const isUser = message.role === "user";
   const streaming = message.streaming ?? false;
 
-  // Queue of all words received from the backend (grows as chunks arrive).
-  // `displayCount` is how many we've actually shown — increments on a timer.
-  const queueRef = useRef<string[]>([]);
-  const [displayCount, setDisplayCount] = useState(0);
+  // visibleChars tracks how many characters of message.content are shown.
+  // We use a ref as the source of truth inside the interval callback to avoid
+  // stale closure issues, and mirror it to state only to trigger re-renders.
+  const [visibleChars, setVisibleChars] = useState(() =>
+    streaming ? 0 : message.content.length
+  );
+  const visibleRef = useRef(streaming ? 0 : message.content.length);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  // Keep queue in sync with incoming content — use stripped plain text for drip
-  useEffect(() => {
-    if (!streaming) return;
-    queueRef.current = stripMarkdown(message.content).split(/(\s+)/);
-  }, [message.content, streaming]);
-  // Drip timer: runs while streaming OR while there are still queued words to show
-  const [dripDone, setDripDone] = useState(false);
 
-  useEffect(() => {
-    if (streaming) {
-      // New message starting — reset everything
-      setDisplayCount(0);
-      setDripDone(false);
-      queueRef.current = [];
+  // Sync the ref so the interval callback always reads the latest content length
+  // without being recreated.
+  const contentRef = useRef(message.content);
+  contentRef.current = message.content;
 
-      if (intervalRef.current) clearInterval(intervalRef.current);
-      intervalRef.current = setInterval(() => {
-        setDisplayCount((prev) => {
-          const total = queueRef.current.length;
-          if (prev < total) return prev + 1;
-          return prev;
-        });
-      }, WORD_INTERVAL_MS);
-    } else {
-      // Streaming stopped — keep the interval going until queue is drained,
-      // then mark drip as done so we swap to full markdown.
-      if (intervalRef.current) clearInterval(intervalRef.current);
-      intervalRef.current = setInterval(() => {
-        setDisplayCount((prev) => {
-          const total = queueRef.current.length;
-          if (prev < total) return prev + 1;
-          // Queue fully drained — stop and switch to markdown
-          clearInterval(intervalRef.current!);
-          intervalRef.current = null;
-          setDripDone(true);
-          return prev;
-        });
-      }, WORD_INTERVAL_MS);
+  // Helper: ensure the drip interval is running
+  const ensureInterval = () => {
+    if (intervalRef.current !== null) return;
+    intervalRef.current = setInterval(() => {
+      const target = contentRef.current.length;
+      const next = visibleRef.current + CHARS_PER_TICK;
+      if (next >= target) {
+        // Reached the end of the current buffer
+        visibleRef.current = target;
+        setVisibleChars(target);
+        // Only stop the interval if streaming has also ended
+        if (!contentRef.current || !intervalRef.current) return;
+        // We keep running while streaming; the streaming→false transition
+        // will clear the interval after the last drain tick (see effect below).
+      } else {
+        visibleRef.current = next;
+        setVisibleChars(next);
+      }
+    }, TICK_MS);
+  };
+
+  // When a new assistant message starts streaming, reset the counter and
+  // kick off the interval.
+  const prevStreamingRef = useRef(streaming);
+  useEffect(() => {
+    const wasStreaming = prevStreamingRef.current;
+    prevStreamingRef.current = streaming;
+
+    if (streaming && !wasStreaming) {
+      // New stream starting — reset
+      visibleRef.current = 0;
+      setVisibleChars(0);
+      ensureInterval();
+    } else if (streaming && wasStreaming) {
+      // Still streaming — new content arrived, make sure interval is alive
+      ensureInterval();
+    } else if (!streaming && wasStreaming) {
+      // Stream just ended — keep the interval running to drain the remaining
+      // buffer. It will be cleared by the cleanup effect once fully drained.
+      ensureInterval();
+    } else if (!streaming && !wasStreaming) {
+      // Non-streaming message (e.g. history) — show immediately
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+      visibleRef.current = message.content.length;
+      setVisibleChars(message.content.length);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [streaming, message.content]);
 
+  // Stop the interval once the drip has fully caught up and streaming is over
+  useEffect(() => {
+    if (
+      !streaming &&
+      visibleChars >= message.content.length &&
+      intervalRef.current
+    ) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+  }, [visibleChars, streaming, message.content.length]);
+
+  // Cleanup on unmount
+  useEffect(() => {
     return () => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
         intervalRef.current = null;
       }
     };
-  }, [streaming]);
+  }, []);
 
   if (isUser) {
     return (
@@ -277,33 +274,30 @@ export default function ChatMessage({ message }: ChatMessageProps) {
     );
   }
 
+  const visibleText = message.content.slice(0, visibleChars);
+  const isRevealing = visibleChars < message.content.length || streaming;
+
   return (
     <div className="flex justify-start px-4 py-1.5">
       <div className="w-full max-w-[85%]">
-        {/* Collapsible reasoning block */}
         {message.thinking && message.thinking.trim().length > 0 && (
           <ThinkingBlock text={message.thinking} streaming={streaming} />
         )}
 
-        {/* Assistant bubble */}
         <div className="rounded-2xl rounded-tl-sm bg-slate-800 px-4 py-3 text-sm text-slate-100 shadow-md">
-          {" "}
-          {/* Waiting cursor before first token arrives */}
-          {!message.content && streaming && (
+          {/* Waiting cursor before first chars arrive */}
+          {!visibleText && streaming && (
             <span className="inline-block h-4 w-0.5 animate-blink rounded-sm bg-indigo-400" />
           )}
-          {/* ── DRIP: plain text word-by-word until queue is drained ── */}
-          {!dripDone && message.content && (
-            <p className="whitespace-pre-wrap leading-relaxed">
-              {queueRef.current.slice(0, displayCount).join("")}
-              {(streaming || displayCount < queueRef.current.length) && (
-                <span className="ml-0.5 inline-block h-[0.9em] w-0.5 animate-blink rounded-sm bg-indigo-400 align-middle" />
+
+          {/* Incrementally-revealed markdown — ReactMarkdown renders at every tick */}
+          {visibleText && (
+            <div className="relative">
+              <MarkdownContent text={visibleText} />
+              {isRevealing && (
+                <span className="inline-block h-[0.9em] w-0.5 animate-blink rounded-sm bg-indigo-400 align-middle" />
               )}
-            </p>
-          )}
-          {/* ── DONE: full markdown render once drip finishes ── */}
-          {dripDone && message.content && (
-            <MarkdownContent text={message.content} />
+            </div>
           )}
         </div>
       </div>
