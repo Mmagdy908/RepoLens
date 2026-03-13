@@ -159,7 +159,7 @@ async def chat(request: ChatRequest) -> StreamingResponse:
             # print(ai_message.content)
 
             session.messages = initial_state["messages"] + [ai_message]
-            print(f"mermaid code from backend:\n{ai_message.content}")
+
             yield f"data: {json.dumps({'type': 'done'})}\n\n"
 
         except Exception as exc:

@@ -24,34 +24,34 @@ async function ensureMermaidInitialised() {
   mermaid.initialize({
     startOnLoad: false,
     theme: "base",
-    themeVariables: {
-      // Slate / indigo dark palette
-      background: "#0f172a",
-      primaryColor: "#1e293b",
-      primaryTextColor: "#e2e8f0",
-      primaryBorderColor: "#334155",
-      lineColor: "#6366f1",
-      secondaryColor: "#1e293b",
-      tertiaryColor: "#0f172a",
-      edgeLabelBackground: "#1e293b",
-      clusterBkg: "#1e293b",
-      clusterBorder: "#334155",
-      titleColor: "#e2e8f0",
-      nodeTextColor: "#e2e8f0",
-      actorBkg: "#1e293b",
-      actorBorder: "#6366f1",
-      actorTextColor: "#e2e8f0",
-      actorLineColor: "#6366f1",
-      signalColor: "#a5b4fc",
-      signalTextColor: "#e2e8f0",
-      labelBoxBkgColor: "#1e293b",
-      labelBoxBorderColor: "#334155",
-      labelTextColor: "#e2e8f0",
-      loopTextColor: "#e2e8f0",
-      noteBorderColor: "#6366f1",
-      noteBkgColor: "#1e293b",
-      noteTextColor: "#e2e8f0",
-    },
+    // themeVariables: {
+    //   // Slate / indigo dark palette
+    //   background: "#0f172a",
+    //   primaryColor: "#1e293b",
+    //   primaryTextColor: "#e2e8f0",
+    //   primaryBorderColor: "#334155",
+    //   lineColor: "#6366f1",
+    //   secondaryColor: "#1e293b",
+    //   tertiaryColor: "#0f172a",
+    //   edgeLabelBackground: "#1e293b",
+    //   clusterBkg: "#1e293b",
+    //   clusterBorder: "#334155",
+    //   titleColor: "#e2e8f0",
+    //   nodeTextColor: "#e2e8f0",
+    //   actorBkg: "#1e293b",
+    //   actorBorder: "#6366f1",
+    //   actorTextColor: "#e2e8f0",
+    //   actorLineColor: "#6366f1",
+    //   signalColor: "#a5b4fc",
+    //   signalTextColor: "#e2e8f0",
+    //   labelBoxBkgColor: "#1e293b",
+    //   labelBoxBorderColor: "#334155",
+    //   labelTextColor: "#e2e8f0",
+    //   loopTextColor: "#e2e8f0",
+    //   noteBorderColor: "#6366f1",
+    //   noteBkgColor: "#1e293b",
+    //   noteTextColor: "#e2e8f0",
+    // },
   });
   mermaidInitialised = true;
 }
@@ -97,10 +97,8 @@ export default function DiagramBlock({ code, onRender }: DiagramBlockProps) {
           setRenderError(null);
           if (onRender) onRender();
         }
-        console.error("Rendering Mermaid diagram finished Succesfully");
       } catch (err) {
         if (!cancelled) {
-          console.error("Error rendering Mermaid diagram:", err);
           setRenderError(err instanceof Error ? err.message : String(err));
           if (onRender) onRender();
         }
