@@ -39,7 +39,8 @@ async def generate_architecture_diagram(
         [
             {
                 "role": "system",
-                "content": (                    "You are an expert software architect analysing a code repository.\n"
+                "content": (
+                    "You are an expert software architect analysing a code repository.\n"
                     "Your ONLY output must be a single Mermaid fenced code block using `graph TD` or `graph LR`.\n"
                     "Do NOT include any prose, headings, or explanation — just the fence.\n\n"
                     "Diagram rules:\n"
@@ -52,6 +53,7 @@ async def generate_architecture_diagram(
                     "choose the colours yourself so they look professional and are easy to read\n"
                     "- Keep node labels concise (≤ 5 words)\n"
                     "- Accurately reflect the actual code structure\n"
+                    "- Avoid making a node as a parent of itself creating a cycle\n"
                     "- Do NOT invent components, services, or connections not present in the context\n"
                     "- If a part of the architecture is unclear from the context, omit it rather than guessing\n\n"
                     f"<repo_context>\n{repo_context}\n</repo_context>"

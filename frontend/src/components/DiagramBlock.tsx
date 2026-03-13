@@ -63,11 +63,13 @@ async function ensureMermaidInitialised() {
 interface DiagramBlockProps {
   /** Raw Mermaid source — no surrounding ``` fences. */
   code: string;
+  onRender?: () => void;
 }
 
 let diagramCounter = 0;
 
-export default function DiagramBlock({ code }: DiagramBlockProps) {
+export default function DiagramBlock({ code, onRender }: DiagramBlockProps) {
+  // console.log(`mermaid code from frontend:\n${code}`);
   const containerRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<string>("");
   const [renderError, setRenderError] = useState<string | null>(null);
@@ -93,10 +95,14 @@ export default function DiagramBlock({ code }: DiagramBlockProps) {
           containerRef.current.innerHTML = svg;
           svgRef.current = svg;
           setRenderError(null);
+          if (onRender) onRender();
         }
+        console.error("Rendering Mermaid diagram finished Succesfully");
       } catch (err) {
         if (!cancelled) {
+          console.error("Error rendering Mermaid diagram:", err);
           setRenderError(err instanceof Error ? err.message : String(err));
+          if (onRender) onRender();
         }
       }
     }
@@ -105,7 +111,7 @@ export default function DiagramBlock({ code }: DiagramBlockProps) {
     return () => {
       cancelled = true;
     };
-  }, [code, diagramId]);
+  }, [code, diagramId, onRender]);
 
   // -------------------------------------------------------------------------
   // Actions

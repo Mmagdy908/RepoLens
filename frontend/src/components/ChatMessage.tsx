@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { ChevronDown, ChevronRight } from "lucide-react";
+import { useState, useEffect, useRef, useMemo } from "react";
+import { ChevronDown, ChevronRight, Loader2 } from "lucide-react";
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const ReactMarkdown = require("react-markdown").default as React.ComponentType<{
   children: string;
@@ -20,7 +20,8 @@ type CodeProps = { className?: string; children?: React.ReactNode };
 type AnchorProps = { href?: string; children?: React.ReactNode };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const markdownComponents: Record<string, React.ComponentType<any>> = {  h1: ({ children }: NodeProps) => (
+const markdownComponents: Record<string, React.ComponentType<any>> = {
+  h1: ({ children }: NodeProps) => (
     <h1 className="mb-3 mt-4 text-lg font-bold text-slate-800 first:mt-0 dark:text-slate-100">
       {children}
     </h1>
@@ -46,7 +47,8 @@ const markdownComponents: Record<string, React.ComponentType<any>> = {  h1: ({ c
   ),
   li: ({ children }: NodeProps) => (
     <li className="leading-relaxed">{children}</li>
-  ),  code: ({ className, children }: CodeProps) => {
+  ),
+  code: ({ className, children }: CodeProps) => {
     const language = (className ?? "").replace("language-", "");
     if (language === "mermaid") {
       return <DiagramBlock code={String(children).trim()} />;
@@ -71,7 +73,9 @@ const markdownComponents: Record<string, React.ComponentType<any>> = {  h1: ({ c
     </blockquote>
   ),
   strong: ({ children }: NodeProps) => (
-    <strong className="font-semibold text-slate-800 dark:text-slate-100">{children}</strong>
+    <strong className="font-semibold text-slate-800 dark:text-slate-100">
+      {children}
+    </strong>
   ),
   em: ({ children }: NodeProps) => (
     <em className="italic text-slate-600 dark:text-slate-300">{children}</em>
@@ -107,9 +111,16 @@ const markdownComponents: Record<string, React.ComponentType<any>> = {  h1: ({ c
   ),
 };
 
-function MarkdownContent({ text }: { text: string }) {
+function MarkdownContent({
+  text,
+  components,
+}: {
+  text: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  components: Record<string, React.ComponentType<any>>;
+}) {
   return (
-    <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
+    <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>
       {text}
     </ReactMarkdown>
   );
@@ -165,7 +176,7 @@ interface ChatMessageProps {
 // Characters of raw markdown revealed per timer tick
 const CHARS_PER_TICK = 6;
 // ms between ticks
-const TICK_MS = 30;
+const TICK_MS = 100;
 
 export default function ChatMessage({ message }: ChatMessageProps) {
   const isUser = message.role === "user";
@@ -185,10 +196,94 @@ export default function ChatMessage({ message }: ChatMessageProps) {
   const contentRef = useRef(message.content);
   contentRef.current = message.content;
 
+  const visibleText = message.content.slice(0, visibleChars);
+  const isRevealing = visibleChars < message.content.length || streaming;
+
+  // Track which mermaid blocks are fully closed in the visible text
+  const finishedMermaidBlocks = useMemo(() => {
+    const blocks = new Set<string>();
+    const regex = /```mermaid\s*([\s\S]*?)```/g;
+    let match;
+    while ((match = regex.exec(message.content)) !== null) {
+      blocks.add(match[1].trim());
+    }
+    return blocks;
+  }, [message.content]);
+
+  // Track rendered state of each block to unblock "drip" effect
+  const [renderedBlocks, setRenderedBlocks] = useState<Set<string>>(new Set());
+
+  // Logic: "pausing" the reveal if we encounter a mermaid block that isn't rendered yet
+  const isWaitingForRender = useMemo(() => {
+    const regex = /```mermaid\s*([\s\S]*?)```/g;
+    let match;
+    while ((match = regex.exec(visibleText)) !== null) {
+      const code = match[1].trim();
+      if (!renderedBlocks.has(code)) {
+        return true;
+      }
+    }
+    return false;
+  }, [visibleText, renderedBlocks]);
+
+  // Sync the ref so the interval callback always reads the latest state
+  const isWaitingRef = useRef(isWaitingForRender);
+  isWaitingRef.current = isWaitingForRender;
+
+  // Memoize components to inject state-aware logic (e.g. loading spinner for incomplete diagrams)
+  const components = useMemo(() => {
+    return {
+      ...markdownComponents,
+      code: ({ className, children }: CodeProps) => {
+        const language = (className ?? "").replace("language-", "");
+        if (language === "mermaid") {
+          const codeContent = String(children).trim();
+          // Render if fully revealed, OR if this specific block is closed
+          const isComplete =
+            !isRevealing || finishedMermaidBlocks.has(codeContent);
+
+          if (isComplete) {
+            return (
+              <DiagramBlock
+                code={codeContent}
+                onRender={() => {
+                  setRenderedBlocks((prev) => {
+                    if (prev.has(codeContent)) return prev;
+                    const next = new Set(prev);
+                    next.add(codeContent);
+                    return next;
+                  });
+                }}
+              />
+            );
+          }
+          return (
+            <div className="my-4 flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-slate-300 bg-slate-50/50 py-6 text-sm text-slate-500 dark:border-slate-700 dark:bg-slate-900/30 dark:text-slate-400">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              <span>Generating diagram...</span>
+            </div>
+          );
+        }
+        // Fallback for non-mermaid code
+        if (className) {
+          return <code className={className}>{children}</code>;
+        }
+        return (
+          <code className="rounded bg-slate-200 px-1 py-0.5 font-mono text-xs text-indigo-700 dark:bg-slate-700 dark:text-indigo-300">
+            {children}
+          </code>
+        );
+      },
+    };
+  }, [finishedMermaidBlocks, isRevealing]);
+
   // Helper: ensure the drip interval is running
   const ensureInterval = () => {
     if (intervalRef.current !== null) return;
     intervalRef.current = setInterval(() => {
+      // If we are waiting for a mermaid diagram to render, PAUSE the typewriter effect
+      if (isWaitingRef.current) return;
+
       const target = contentRef.current.length;
       const next = visibleRef.current + CHARS_PER_TICK;
       if (next >= target) {
@@ -271,9 +366,6 @@ export default function ChatMessage({ message }: ChatMessageProps) {
     );
   }
 
-  const visibleText = message.content.slice(0, visibleChars);
-  const isRevealing = visibleChars < message.content.length || streaming;
-
   return (
     <div className="flex justify-start px-4 py-1.5">
       <div className="w-full max-w-[85%]">
@@ -290,8 +382,8 @@ export default function ChatMessage({ message }: ChatMessageProps) {
           {/* Incrementally-revealed markdown — ReactMarkdown renders at every tick */}
           {visibleText && (
             <div className="relative">
-              <MarkdownContent text={visibleText} />
-              {isRevealing && (
+              <MarkdownContent text={visibleText} components={components} />
+              {isRevealing && !isWaitingForRender && (
                 <span className="inline-block h-[0.9em] w-0.5 animate-blink rounded-sm bg-indigo-400 align-middle" />
               )}
             </div>
