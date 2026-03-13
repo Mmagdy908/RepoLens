@@ -285,7 +285,13 @@ export default function ChatMessage({ message }: ChatMessageProps) {
       if (isWaitingRef.current) return;
 
       const target = contentRef.current.length;
-      const next = visibleRef.current + CHARS_PER_TICK;
+      
+      // If we built up a large backlog (e.g. while waiting for a diagram to render),
+      // speed up the reveal so we catch up quickly instead of dripping slowly.
+      const backlog = target - visibleRef.current;
+      const charsToReveal = backlog > 100 ? Math.floor(backlog / 4) : CHARS_PER_TICK;
+      
+      const next = visibleRef.current + charsToReveal;
       if (next >= target) {
         // Reached the end of the current buffer
         visibleRef.current = target;
