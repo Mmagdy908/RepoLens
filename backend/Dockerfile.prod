@@ -10,6 +10,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Stage 2: lean runtime image
 FROM python:3.14-slim AS runtime
 
+# Install system dependencies needed by gitpython / tiktoken
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+    
 WORKDIR /app
 
 # Copy installed packages from builder
