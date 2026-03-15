@@ -16,6 +16,8 @@ const nextConfig: NextConfig = {
     }
     return config;
   },
+  // Ensure we can build despite the webpack config under Turbopack
+  turbopack: {},
 };
 
 export default nextConfig;
