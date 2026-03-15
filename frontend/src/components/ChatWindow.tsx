@@ -10,7 +10,7 @@
 import { useRef, useEffect } from "react";
 import { MessageSquare } from "lucide-react";
 import ChatMessage from "@/components/ChatMessage";
-import type { ChatMessage as ChatMessageType } from "@/lib/types";
+import type { ChatMessage as ChatMessageType } from "@/utils/types";
 
 interface ChatWindowProps {
   messages: ChatMessageType[];

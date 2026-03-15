@@ -2,8 +2,8 @@
 
 import { useRef, useState } from "react";
 import { Upload, Link, Loader2 } from "lucide-react";
-import { ingestRepo, ingestZip } from "@/lib/api";
-import type { IngestResponse } from "@/lib/types";
+import { ingestRepo, ingestZip } from "@/utils/api";
+import type { IngestResponse } from "@/utils/types";
 import TokenUsageBar from "@/components/TokenUsageBar";
 
 interface RepoInputPanelProps {
@@ -78,7 +78,9 @@ export default function RepoInputPanel({ onIngested }: RepoInputPanelProps) {
     <div className="w-full space-y-4 rounded-xl border border-slate-200 bg-slate-50 p-5 backdrop-blur dark:border-slate-700 dark:bg-slate-800/60">
       {/* URL input */}
       <form onSubmit={handleUrlSubmit} className="flex gap-2">
-        <div className="relative flex-1">          <Link
+        <div className="relative flex-1">
+          {" "}
+          <Link
             size={15}
             className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-400"
           />
@@ -106,8 +108,8 @@ export default function RepoInputPanel({ onIngested }: RepoInputPanelProps) {
           )}
         </button>
       </form>
-
-      {/* Zip drag-and-drop zone */}        <div
+      {/* Zip drag-and-drop zone */}{" "}
+      <div
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
@@ -130,20 +132,19 @@ export default function RepoInputPanel({ onIngested }: RepoInputPanelProps) {
           onChange={handleFileInputChange}
         />
       </div>
-
-      {/* Status line shown while loading */}      {loading && status && (
+      {/* Status line shown while loading */}{" "}
+      {loading && status && (
         <p className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
           <Loader2 size={12} className="animate-spin" />
           {status}
         </p>
       )}
-
-      {/* Error message */}      {error && (
+      {/* Error message */}{" "}
+      {error && (
         <p className="rounded-lg border border-red-700 bg-red-50 px-3 py-2 text-xs text-red-700 dark:bg-red-950/40 dark:text-red-400 dark:border-red-700">
           {error}
         </p>
       )}
-
       {/* Token usage bar shown after successful ingestion */}
       {result && !loading && (
         <TokenUsageBar used={result.token_count} budget={result.token_budget} />

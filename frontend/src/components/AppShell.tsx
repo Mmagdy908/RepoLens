@@ -28,13 +28,13 @@ import QuickActions from "@/components/QuickActions";
 import ChatWindow from "@/components/ChatWindow";
 import ChatInput from "@/components/ChatInput";
 
-import { sendMessage } from "@/lib/api";
+import { sendMessage } from "@/utils/api";
 import type {
   ChatMessage,
   FileNode,
   IngestResponse,
   SseEvent,
-} from "@/lib/types";
+} from "@/utils/types";
 
 export default function AppShell() {
   // Session state
@@ -179,7 +179,8 @@ export default function AppShell() {
                 <circle cx="11" cy="11" r="8" />
                 <line x1="21" y1="21" x2="16.65" y2="16.65" />
                 <circle cx="11" cy="11" r="3" />
-              </svg>              <span className="text-sm font-semibold tracking-tight text-slate-800 dark:text-slate-100">
+              </svg>{" "}
+              <span className="text-sm font-semibold tracking-tight text-slate-800 dark:text-slate-100">
                 RepoLens
               </span>
             </div>
@@ -205,7 +206,8 @@ export default function AppShell() {
       {/* Main column                                                          */}
       {/* ------------------------------------------------------------------ */}
       <div className="flex flex-1 flex-col overflow-hidden">
-        {/* Top bar */}        <header className="flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 px-4 py-2">
+        {/* Top bar */}{" "}
+        <header className="flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 px-4 py-2">
           <button
             onClick={() => setSidebarOpen((o) => !o)}
             title={sidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
@@ -221,7 +223,6 @@ export default function AppShell() {
             {sessionId ? "Chat" : "New Analysis"}
           </span>
         </header>
-
         {/* Content area */}
         <div className="flex flex-1 flex-col overflow-hidden p-4 gap-4">
           {/* Repo input — shown until a session exists */}

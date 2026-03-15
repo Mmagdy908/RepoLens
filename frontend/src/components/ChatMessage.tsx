@@ -13,7 +13,7 @@ const ReactMarkdown = require("react-markdown").default as React.ComponentType<{
 const remarkGfm = require("remark-gfm").default as unknown;
 import React from "react";
 import DiagramBlock from "./DiagramBlock";
-import type { ChatMessage as ChatMessageType } from "@/lib/types";
+import type { ChatMessage as ChatMessageType } from "@/utils/types";
 
 type NodeProps = { children?: React.ReactNode };
 type CodeProps = { className?: string; children?: React.ReactNode };
@@ -285,12 +285,13 @@ export default function ChatMessage({ message }: ChatMessageProps) {
       if (isWaitingRef.current) return;
 
       const target = contentRef.current.length;
-      
+
       // If we built up a large backlog (e.g. while waiting for a diagram to render),
       // speed up the reveal so we catch up quickly instead of dripping slowly.
       const backlog = target - visibleRef.current;
-      const charsToReveal = backlog > 100 ? Math.floor(backlog / 4) : CHARS_PER_TICK;
-      
+      const charsToReveal =
+        backlog > 100 ? Math.floor(backlog / 4) : CHARS_PER_TICK;
+
       const next = visibleRef.current + charsToReveal;
       if (next >= target) {
         // Reached the end of the current buffer

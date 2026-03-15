@@ -12,7 +12,7 @@ import {
   FileJson,
   Image,
 } from "lucide-react";
-import type { FileNode } from "@/lib/types";
+import type { FileNode } from "@/utils/types";
 
 // ---------------------------------------------------------------------------
 // Tree-building helpers
@@ -121,8 +121,14 @@ function FileIcon({ name, isBinary }: { name: string; isBinary: boolean }) {
   if (ext === "json" || ext === "yaml" || ext === "yml" || ext === "toml")
     return <FileJson size={13} className={cls} />;
   if (CODE_EXTS.has(ext))
-    return <FileCode size={13} className="shrink-0 text-indigo-400" />;  if (DOC_EXTS.has(ext))
-    return <FileText size={13} className="shrink-0 text-slate-400 dark:text-slate-300" />;
+    return <FileCode size={13} className="shrink-0 text-indigo-400" />;
+  if (DOC_EXTS.has(ext))
+    return (
+      <FileText
+        size={13}
+        className="shrink-0 text-slate-400 dark:text-slate-300"
+      />
+    );
   return <File size={13} className={cls} />;
 }
 
@@ -140,7 +146,9 @@ function FolderNode({ entry, depth, onFileClick }: FolderNodeProps) {
   const [open, setOpen] = useState(false);
 
   return (
-    <li>      <button
+    <li>
+      {" "}
+      <button
         onClick={() => setOpen((o) => !o)}
         className="flex w-full items-center gap-1.5 rounded px-1 py-0.5 text-left text-xs text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-700/60"
         style={{ paddingLeft: `${depth * 12 + 4}px` }}
@@ -157,7 +165,6 @@ function FolderNode({ entry, depth, onFileClick }: FolderNodeProps) {
         )}
         <span className="truncate">{entry.name}</span>
       </button>
-
       {open && entry.children.length > 0 && (
         <ul>
           {entry.children.map((child) =>
