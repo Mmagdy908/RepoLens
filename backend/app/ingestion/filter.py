@@ -1,16 +1,4 @@
-"""File filter — Feature 1.1 (Repo Ingestion Engine).
-
-Provides ``filter_files`` which walks a repo tree, skips ignored paths, and
-returns a list of ``FileNode`` objects for files that should be ingested.
-
-Ignore rules (applied in priority order)
------------------------------------------
-1. Hard-coded default ignores (``ALWAYS_IGNORE_DIRS`` / ``ALWAYS_IGNORE_PATTERNS``).
-2. ``.repolensignore`` file at the repo root (pathspec gitignore syntax).
-3. Standard ``.gitignore`` at the repo root.
-4. Binary-file detection: read the first 512 bytes; if a null byte is found
-   the file is marked ``is_binary=True`` and excluded from context packing
-   (but still returned so the frontend can show it in the tree).
+"""
 
 Usage
 -----

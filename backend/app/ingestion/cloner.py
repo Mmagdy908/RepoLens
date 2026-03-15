@@ -1,7 +1,4 @@
-"""Repo cloner — Feature 1.1 (Repo Ingestion Engine).
-
-Provides ``clone_from_url`` which performs a shallow git clone into a
-temporary directory and returns the path to the cloned root.
+"""
 
 Usage
 -----

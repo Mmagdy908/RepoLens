@@ -1,33 +1,9 @@
-"""Pydantic v2 models for session state.
-
-These models back the **in-memory session store** (Feature 1.7 — FastAPI Backend
-Skeleton) and are shared across several features:
-
-- Feature 1.1 (Repo Ingestion): `FileNode` is produced by `ingestion/filter.py`
-  for every file that survives the ingestion filter.  The list of `FileNode`
-  objects is stored in `SessionState.file_tree` and returned to the frontend so
-  it can render the file-explorer sidebar.
-
-- Feature 1.2 (Context Packing): `SessionState.repo_context` holds the packed
-  codebase string assembled by `ingestion/packer.py`.  `token_count` and
-  `token_budget` let the frontend render the token-usage progress bar.
-
-- Feature 1.3 (Nova Agent / LangGraph): `SessionState.messages` is the
-  conversation history threaded through the LangGraph `AgentState`.
-  `repo_context` is injected into the agent's initial state on every chat turn.
-
-- Feature 1.7 (Sessions API — `GET/DELETE /api/sessions/{id}`):
-  `SessionSummary` is the lightweight DTO returned by the sessions list endpoint
-  so clients don't have to receive the full (potentially huge) `repo_context`
-  string on every request.
-"""
-
 from typing import Optional
 from pydantic import BaseModel, Field
 
 
 class FileNode(BaseModel):
-    """A single file discovered during repo ingestion (Feature 1.1).
+    """A single file discovered during repo ingestion
 
     Produced by ``ingestion/filter.py`` and stored inside ``SessionState.file_tree``.
     Binary files are included with ``is_binary=True`` so the frontend can show
@@ -61,11 +37,11 @@ class SessionState(BaseModel):
     repo_url: Optional[str] = Field(
         None, description="GitHub URL that was ingested, if any."
     )
-    # Feature 1.1 — populated by filter.py after cloning / zip extraction.
+
     file_tree: list[FileNode] = Field(
         default_factory=list, description="All non-binary files in the repo."
     )
-    # Feature 1.2 — packed codebase string injected into Nova's context window.
+
     repo_context: Optional[str] = Field(
         None, description="Packed codebase string sent to Nova."
     )
@@ -73,14 +49,14 @@ class SessionState(BaseModel):
     token_budget: int = Field(
         750_000, description="Maximum tokens allowed in the context."
     )
-    # Feature 1.3 — LangGraph message history (list of role/content dicts).
+
     messages: list[dict] = Field(
         default_factory=list, description="Chat history (LangGraph message dicts)."
     )
 
 
 class SessionSummary(BaseModel):
-    """Lightweight DTO returned by ``GET /api/sessions/{id}`` (Feature 1.7).
+    """Lightweight DTO returned by ``GET /api/sessions/{id}``.
 
     Omits ``repo_context`` and ``messages`` so the response stays small even
     when the packed codebase is hundreds of thousands of tokens.  The frontend

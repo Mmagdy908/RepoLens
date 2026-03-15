@@ -1,9 +1,4 @@
-"""Zip extractor — Feature 1.1 (Repo Ingestion Engine).
-
-Provides ``extract_zip`` which receives raw zip bytes (from a multipart
-upload), extracts them into a temporary directory, and returns the path to
-the repository root inside the extracted tree.
-
+"""
 Usage
 -----
     from app.ingestion.extractor import extract_zip

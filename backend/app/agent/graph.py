@@ -41,9 +41,8 @@ ALL_TOOLS = [
 
 _llm_with_tools = _llm.bind_tools(ALL_TOOLS)
 
-# ---------------------------------------------------------------------------
+
 # Nodes
-# ---------------------------------------------------------------------------
 
 
 async def agent_node(state: AgentState) -> dict:
@@ -53,17 +52,15 @@ async def agent_node(state: AgentState) -> dict:
     return {"messages": [response]}
 
 
-# ToolNode automatically executes whichever tool the LLM selected.
-# InjectedToolArg fields are injected from the graph state automatically.
 tool_node = ToolNode(
     tools=ALL_TOOLS,
-    # Pass state fields that are marked InjectedToolArg
+    # Pass state fields that are marked InjectedState into the tool functions
     handle_tool_errors=True,
 )
 
-# ---------------------------------------------------------------------------
+
 # Graph
-# ---------------------------------------------------------------------------
+
 
 _builder = StateGraph(AgentState)
 

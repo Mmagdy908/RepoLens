@@ -1,12 +1,4 @@
-"""Chat API — Feature 1.3 (Nova Client + LangGraph Agent).
-
-Accepts a ChatRequest, builds an AgentState from the session, and streams
-the assistant reply as Server-Sent Events (SSE).
-
-Routes
-------
-POST /api/chat   → StreamingResponse (text/event-stream)
-
+"""
 SSE event shapes
 ----------------
   {"type": "step",  "content": "<msg>"}   — emitted on graph start and each tool invocation
@@ -14,9 +6,6 @@ SSE event shapes
   {"type": "done"}                        — end-of-stream; session history persisted
   {"type": "error", "detail": "<msg>"}    — unhandled exception
 
-Note: nova-2-lite-v1 does not stream reasoning tokens on tool-call passes, so
-there is no "thinking" event type — tool-call passes produce empty content chunks
-and are surfaced only via the "step" label emitted on on_tool_start.
 """
 
 import json
@@ -31,10 +20,9 @@ from app.models.chat import ChatRequest
 
 router = APIRouter(prefix="/api")
 
-# ---------------------------------------------------------------------------
-# Human-readable reasoning statements shown to the user while a tool runs.
-# Keyed by the exact @tool function name.
-# ---------------------------------------------------------------------------
+
+# Human-readable reasoning statements
+
 _TOOL_REASONING: dict[str, str] = {
     "get_project_overview": "Reading the codebase to build a project overview…",
     "get_tech_stack": "Scanning dependencies and configs to identify the tech stack…",
@@ -50,9 +38,7 @@ _TOOL_REASONING: dict[str, str] = {
     "answer_general_question": "Searching the codebase to answer your question…",
 }
 
-# ---------------------------------------------------------------------------
-# System prompt — prepended once at the start of every new session.
-# ---------------------------------------------------------------------------
+
 _SYSTEM_PROMPT = """\
 You are RepoLens, an expert AI software engineer and code analyst.
 You have been given full access to a software repository and a set of \
@@ -151,9 +137,6 @@ async def chat(request: ChatRequest) -> StreamingResponse:
                     yield response
 
             # Stream finished — persist the updated message history.
-            # We need the final graph state; re-invoke synchronously would double-call,
-            # so we reconstruct the AI message from the collected tokens instead and
-            # append it to the session manually.
 
             ai_message = AIMessage(content="".join(full_content_parts))
             # print(ai_message.content)

@@ -1,5 +1,4 @@
-"""Context packer — Feature 1.2.
-
+"""
 Turns a list of ``FileNode`` objects into a single packed string that fits
 inside Nova's 1 M-token context window, respecting a configurable token budget.
 
@@ -101,10 +100,11 @@ def pack_context(
     sorted_nodes = sorted(
         (n for n in file_nodes if not n.is_binary),
         key=lambda n: (-_priority_score(n.path), n.path),
-    )  # ------------------------------------------------------------------
+    )
+
     # Build file list for the preamble (before we know what fits).
     # We use sorted_nodes order so the preamble reflects pack priority.
-    # ------------------------------------------------------------------
+
     file_listing = "\n".join(f"  - {n.path}" for n in sorted_nodes)
     included_count = len(sorted_nodes)
 

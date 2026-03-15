@@ -1,5 +1,4 @@
-"""Token counter — Feature 1.1 / 1.2.
-
+"""
 Provides ``count_tokens`` which uses the ``cl100k_base`` tiktoken encoding
 (same vocabulary as GPT-4 / Nova) to count tokens in a text string.
 

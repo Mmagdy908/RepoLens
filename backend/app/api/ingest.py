@@ -1,15 +1,8 @@
-"""Ingest API — Feature 1.1 (Repo Ingestion Engine).
-
+"""
 Accepts either a JSON body (GitHub URL) or a multipart file upload (zip).
 Runs the full ingestion pipeline:
   clone / extract  →  filter_files  →  count_tokens per file  →  store session
 
-Context packing (pack_context) is added in Milestone 4 (T4.3).
-
-Routes
-------
-POST /api/ingest          → IngestResponse (201)  — JSON body { "url": "..." }
-POST /api/ingest/upload   → IngestResponse (201)  — multipart zip file upload
 """
 
 import asyncio

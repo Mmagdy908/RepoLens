@@ -1,24 +1,12 @@
-"""Sessions API — Feature 1.7 (FastAPI Backend Skeleton).
-
-In-memory session store: Dict[session_id, SessionState].
-No database is used in Phase 1; state is lost on server restart.
-
-Routes
-------
-GET    /api/sessions/{id}       → retrieve session summary (200 | 404)
-DELETE /api/sessions/{id}       → delete session (204 | 404)
-"""
-
 from fastapi import APIRouter, HTTPException
 
 from app.models.session import SessionState, SessionSummary
 
 router = APIRouter(prefix="/api")
 
-# ---------------------------------------------------------------------------
-# In-memory store — module-level singleton, shared across all requests.
-# Keyed by session_id (UUID string).
-# ---------------------------------------------------------------------------
+
+# In-memory session store
+
 _sessions: dict[str, SessionState] = {}
 
 
@@ -32,9 +20,7 @@ def _to_summary(session: SessionState) -> SessionSummary:
     )
 
 
-# ---------------------------------------------------------------------------
 # Routes
-# ---------------------------------------------------------------------------
 
 
 @router.get("/sessions/{session_id}", response_model=SessionSummary)
