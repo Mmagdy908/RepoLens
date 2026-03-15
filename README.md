@@ -67,6 +67,7 @@ Ensure your `.env` contains:
 NOVA_API_KEY=your_amazon_nova_api_key_here
 NEXT_PUBLIC_API_URL=http://localhost:8000
 NOVA_MODEL_ID=nova-2-lite-v1
+FRONTEND_URL=http://localhost:3000
 ```
 
 ### 3. Start the Application
