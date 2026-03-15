@@ -27,6 +27,7 @@ import FileExplorer from "@/components/FileExplorer";
 import QuickActions from "@/components/QuickActions";
 import ChatWindow from "@/components/ChatWindow";
 import ChatInput from "@/components/ChatInput";
+import TokenUsageBar from "@/components/TokenUsageBar";
 
 import { sendMessage } from "@/utils/api";
 import type {
@@ -206,23 +207,35 @@ export default function AppShell() {
       {/* Main column                                                          */}
       {/* ------------------------------------------------------------------ */}
       <div className="flex flex-1 flex-col overflow-hidden">
-        {/* Top bar */}{" "}
-        <header className="flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 px-4 py-2">
-          <button
-            onClick={() => setSidebarOpen((o) => !o)}
-            title={sidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
-            className="rounded-md p-1.5 text-slate-500 hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200 transition-colors"
-          >
-            {sidebarOpen ? (
-              <PanelLeftClose size={16} />
-            ) : (
-              <PanelLeftOpen size={16} />
-            )}
-          </button>
-          <span className="text-sm font-medium text-slate-600 dark:text-slate-300">
-            {sessionId ? "Chat" : "New Analysis"}
-          </span>
+        {/* Top bar */}
+        <header className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 px-4 py-2">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setSidebarOpen((o) => !o)}
+              title={sidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
+              className="rounded-md p-1.5 text-slate-500 hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200 transition-colors"
+            >
+              {sidebarOpen ? (
+                <PanelLeftClose size={16} />
+              ) : (
+                <PanelLeftOpen size={16} />
+              )}
+            </button>
+            <span className="text-sm font-medium text-slate-600 dark:text-slate-300">
+              {sessionId ? "Chat" : "New Analysis"}
+            </span>
+          </div>
+
+          {sessionId && (
+            <div className="w-64">
+              <TokenUsageBar used={tokenUsed} budget={tokenBudget} />
+            </div>
+          )}
+
+          {/* Dummy empty div to balance flex-between and keep the token bar centered */}
+          <div className="w-[120px]" />
         </header>
+
         {/* Content area */}
         <div className="flex flex-1 flex-col overflow-hidden p-4 gap-4">
           {/* Repo input — shown until a session exists */}
