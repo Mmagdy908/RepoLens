@@ -5,6 +5,7 @@ from app.api import chat, health, ingest, sessions, tools_usage
 
 import os
 
+print("FRONTEND_URL:", os.environ.get("FRONTEND_URL"))
 app = FastAPI(title="RepoLens API", version="0.1.0")
 
 app.add_middleware(
