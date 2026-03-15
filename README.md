@@ -1,6 +1,6 @@
 # RepoLens 🔍
 
-[![Deployed App](https://img.shields.io/badge/Deployed_App-Link_Pending-blue?style=for-the-badge)](https://repolens-production-e64d.up.railway.app/)
+[![Deployed App]](https://repolens-production-e64d.up.railway.app/)
 
 **RepoLens** is an agentic AI system that ingests a software repository (via GitHub URL or zip upload) and acts as an expert on it. It answers architectural questions, generates Mermaid diagrams, detects design flaws, produces onboarding guides, and more — powered by **Amazon Nova 2 Lite** through a **LangGraph** multi-tool agent.
 
